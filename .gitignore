@@ -1,1 +1,10 @@
 .DS_Store
+.Trashes
+*.swp
+
+# Xcode Build Files
+build/
+DerivedData/
+
+#Personal Settings
+xcuserdata/
