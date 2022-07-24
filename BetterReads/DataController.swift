@@ -10,7 +10,7 @@ import Foundation
 class DataController {
 
     private struct Constants {
-        static let APIKey = "AIzaSyAHh4clEpOs3SUgEnN1yS015F9yBu7aiR8"
+        static let APIKey =  Bundle.main.object(forInfoDictionaryKey: "books_API") as? String
         static let scheme: String = "https"
         static let host: String = "www.googleapis.com"
         static let path: String = "/books/v1/volumes"

@@ -44,6 +44,7 @@
 		345785D72873EA72008EB7CC /* VolumeDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolumeDetailsViewController.swift; sourceTree = "<group>"; };
 		345785D92873EA8A008EB7CC /* FeedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedViewController.swift; sourceTree = "<group>"; };
 		345785DB2873EA95008EB7CC /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		345785E1288CF41D008EB7CC /* APIKeys.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = APIKeys.xcconfig; sourceTree = "<group>"; };
 		34BF38C427E59A0700474AE3 /* BetterReads.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BetterReads.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		34BF38C727E59A0700474AE3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		34BF38C927E59A0700474AE3 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -108,6 +109,7 @@
 		34BF38BB27E59A0700474AE3 = {
 			isa = PBXGroup;
 			children = (
+				345785E1288CF41D008EB7CC /* APIKeys.xcconfig */,
 				34BF38C627E59A0700474AE3 /* BetterReads */,
 				34BF38DD27E59A0700474AE3 /* BetterReadsTests */,
 				34BF38E727E59A0700474AE3 /* BetterReadsUITests */,
@@ -354,6 +356,7 @@
 /* Begin XCBuildConfiguration section */
 		34BF38EC27E59A0700474AE3 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 345785E1288CF41D008EB7CC /* APIKeys.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -415,6 +418,7 @@
 		};
 		34BF38ED27E59A0700474AE3 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 345785E1288CF41D008EB7CC /* APIKeys.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
