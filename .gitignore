@@ -7,4 +7,4 @@ build/
 DerivedData/
 
 #Personal Settings
-xcuserdata/
+xcuserdata/*

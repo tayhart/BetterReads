@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import UIKit
 
 class DataController {
 
@@ -16,8 +15,8 @@ class DataController {
         static let host: String = "www.googleapis.com"
         static let path: String = "/books/v1/volumes"
     }
+
     func request(_ query: String, completion: @escaping (GoogleBooksResponse) -> Void) {
-        
         var requestComponents = URLComponents()
         requestComponents.scheme = Constants.scheme
         requestComponents.host = Constants.host

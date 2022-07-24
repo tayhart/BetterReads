@@ -7,6 +7,7 @@
 
 import UIKit
 
+//TODO: Rename this. This is the Search Base View Controller
 class ViewController: UINavigationController {
     let dataController = DataController()
     var searchResults: SearchResultsViewController = SearchResultsViewController()
@@ -15,7 +16,7 @@ class ViewController: UINavigationController {
     let lists = UIBarButtonItem(barButtonSystemItem: .bookmarks, target: self, action: nil)
     let searchButton = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: nil)
     let profile = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: nil)
-    let flexButton = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
+    let flexButton = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: #selector(buttonPressed(sender:)))
     
     lazy var searchBarView: UIStackView = {
         let inputStackView = UIStackView()
@@ -34,8 +35,12 @@ class ViewController: UINavigationController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // Do any additional setup after loading the view.
+
+        //Navigation bar Set up
+        navigationBar.isTranslucent = false
+        navigationBar.prefersLargeTitles = true
+
+        self.view.backgroundColor = .white
         self.view.addSubview(searchBarView)
         searchBarView.backgroundColor = .white
 
@@ -43,8 +48,7 @@ class ViewController: UINavigationController {
         toolbar.backgroundColor = .white
         toolbar.items = [flexButton, profile, lists, searchButton, flexButton]
 
-        searchResults.view.translatesAutoresizingMaskIntoConstraints = false //TODO: Move to inside the searchResults class
-        self.view.addSubview(searchResults.view)
+        self.view.addSubview(searchResults.collectionView)
         
         let searchButton = UIButton(type: .system)
         searchButton.setTitle("Search", for: .normal)
@@ -58,18 +62,17 @@ class ViewController: UINavigationController {
         NSLayoutConstraint.activate([
             inputField.widthAnchor.constraint(equalToConstant: 240),
             searchBarView.heightAnchor.constraint(equalToConstant: 80),
-            searchBarView.topAnchor.constraint(equalTo: view.topAnchor, constant: 15),
+            searchBarView.topAnchor.constraint(equalTo: navigationBar.bottomAnchor),
             searchBarView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 15),
             searchBarView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 15),
-            searchResults.view.topAnchor.constraint(equalTo: searchBarView.bottomAnchor),
-            searchResults.view.bottomAnchor.constraint(equalTo: toolbar.topAnchor),
-            searchResults.view.leftAnchor.constraint(equalTo: view.leftAnchor),
-            searchResults.view.rightAnchor.constraint(equalTo: view.rightAnchor)
+            searchResults.collectionView.topAnchor.constraint(equalTo: searchBarView.bottomAnchor),
+            searchResults.collectionView.bottomAnchor.constraint(equalTo: toolbar.topAnchor),
+            searchResults.collectionView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            searchResults.collectionView.rightAnchor.constraint(equalTo: view.rightAnchor)
         ])
     }
     
-    @objc func didPressSearchButton() {
-        print("SEARCH PRESSED")
+    func didPressSearchButton() {
         guard let query = inputField.text else {
             print("NOTHING TO SHOW")
             return
@@ -78,6 +81,10 @@ class ViewController: UINavigationController {
             searchResult in
             self.searchResults.populateWithData(responseData: searchResult)
         })
+    }
+
+    @objc func buttonPressed(sender: UIBarButtonItem) {
+        
     }
 }
 

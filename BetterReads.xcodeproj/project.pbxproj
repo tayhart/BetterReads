@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		345785D82873EA72008EB7CC /* VolumeDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345785D72873EA72008EB7CC /* VolumeDetailsViewController.swift */; };
+		345785DA2873EA8A008EB7CC /* FeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345785D92873EA8A008EB7CC /* FeedViewController.swift */; };
+		345785DC2873EA95008EB7CC /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345785DB2873EA95008EB7CC /* ProfileViewController.swift */; };
 		34BF38C827E59A0700474AE3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BF38C727E59A0700474AE3 /* AppDelegate.swift */; };
 		34BF38CA27E59A0700474AE3 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BF38C927E59A0700474AE3 /* SceneDelegate.swift */; };
 		34BF38CC27E59A0700474AE3 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BF38CB27E59A0700474AE3 /* ViewController.swift */; };
@@ -38,6 +41,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		345785D72873EA72008EB7CC /* VolumeDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolumeDetailsViewController.swift; sourceTree = "<group>"; };
+		345785D92873EA8A008EB7CC /* FeedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedViewController.swift; sourceTree = "<group>"; };
+		345785DB2873EA95008EB7CC /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		34BF38C427E59A0700474AE3 /* BetterReads.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BetterReads.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		34BF38C727E59A0700474AE3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		34BF38C927E59A0700474AE3 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -80,6 +86,25 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		345785DD2873EACF008EB7CC /* View Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				345785D72873EA72008EB7CC /* VolumeDetailsViewController.swift */,
+				345785D92873EA8A008EB7CC /* FeedViewController.swift */,
+				345785DB2873EA95008EB7CC /* ProfileViewController.swift */,
+				34BF38CB27E59A0700474AE3 /* ViewController.swift */,
+			);
+			path = "View Controllers";
+			sourceTree = "<group>";
+		};
+		345785DE2873F497008EB7CC /* Search */ = {
+			isa = PBXGroup;
+			children = (
+				34FF446627ED81D900DE886B /* SearchResultsViewController.swift */,
+			);
+			path = Search;
+			sourceTree = "<group>";
+		};
 		34BF38BB27E59A0700474AE3 = {
 			isa = PBXGroup;
 			children = (
@@ -104,9 +129,9 @@
 			isa = PBXGroup;
 			children = (
 				34BF38C727E59A0700474AE3 /* AppDelegate.swift */,
-				34FF446627ED81D900DE886B /* SearchResultsViewController.swift */,
+				345785DE2873F497008EB7CC /* Search */,
+				345785DD2873EACF008EB7CC /* View Controllers */,
 				34BF38C927E59A0700474AE3 /* SceneDelegate.swift */,
-				34BF38CB27E59A0700474AE3 /* ViewController.swift */,
 				34BF38CD27E59A0700474AE3 /* Main.storyboard */,
 				34BF38D027E59A0700474AE3 /* Assets.xcassets */,
 				34BF38D227E59A0700474AE3 /* LaunchScreen.storyboard */,
@@ -267,8 +292,11 @@
 				34BF38CC27E59A0700474AE3 /* ViewController.swift in Sources */,
 				34BF38F827E59A3900474AE3 /* DataController.swift in Sources */,
 				34BF38C827E59A0700474AE3 /* AppDelegate.swift in Sources */,
+				345785D82873EA72008EB7CC /* VolumeDetailsViewController.swift in Sources */,
 				34BF38CA27E59A0700474AE3 /* SceneDelegate.swift in Sources */,
 				34FF446727ED81D900DE886B /* SearchResultsViewController.swift in Sources */,
+				345785DC2873EA95008EB7CC /* ProfileViewController.swift in Sources */,
+				345785DA2873EA8A008EB7CC /* FeedViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
