@@ -1,6 +1,6 @@
 //
 //  ViewController.swift
-//  mibrary
+//  BetterReads
 //
 //  Created by Taylor Hartman on 3/18/22.
 //
@@ -13,10 +13,39 @@ class ViewController: UINavigationController {
     var searchResults: SearchResultsViewController = SearchResultsViewController()
 
     //Toolbar items
-    let lists = UIBarButtonItem(barButtonSystemItem: .bookmarks, target: self, action: nil)
-    let searchButton = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: nil)
-    let profile = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: nil)
-    let flexButton = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: #selector(buttonPressed(sender:)))
+    private lazy var homeButton: UIBarButtonItem = {
+        var homeIcon = UIImage(named: "home")?.withRenderingMode(.alwaysTemplate)
+        let button = UIButton()
+        button.setImage(homeIcon?.withTintColor(.systemTeal, renderingMode: .automatic), for: .normal)
+        button.setImage(homeIcon?.withTintColor(.systemPink, renderingMode: .alwaysTemplate), for: .selected)
+        button.widthAnchor.constraint(equalToConstant: 20).isActive = true
+        button.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        let barButton = UIBarButtonItem(customView: button)
+        return barButton
+    }()
+    private lazy var searchButton: UIBarButtonItem = {
+        var icon = UIImage(named: "search")?.withRenderingMode(.alwaysTemplate)
+        let button = UIButton()
+        button.setImage(icon?.withTintColor(.systemTeal, renderingMode: .automatic), for: .normal)
+        button.setImage(icon?.withTintColor(.systemPink, renderingMode: .alwaysTemplate), for: .selected)
+        button.widthAnchor.constraint(equalToConstant: 20).isActive = true
+        button.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        let barButton = UIBarButtonItem(customView: button)
+        return barButton
+    }()
+    private lazy var profileButton: UIBarButtonItem = {
+        var icon = UIImage(named: "profile")?.withRenderingMode(.alwaysTemplate)
+        let button = UIButton()
+        button.setImage(icon?.withTintColor(.systemTeal, renderingMode: .automatic), for: .normal)
+        button.setImage(icon?.withTintColor(.systemPink, renderingMode: .alwaysTemplate), for: .selected)
+        button.widthAnchor.constraint(equalToConstant: 20).isActive = true
+        button.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        let barButton = UIBarButtonItem(customView: button)
+        return barButton
+    }()
+    private var flexButton: UIBarButtonItem {
+        return UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
+    }
     
     lazy var searchBarView: UIStackView = {
         let inputStackView = UIStackView()
@@ -46,7 +75,7 @@ class ViewController: UINavigationController {
 
         setToolbarHidden(false, animated: false)
         toolbar.backgroundColor = .white
-        toolbar.items = [flexButton, profile, lists, searchButton, flexButton]
+        toolbar.items = [flexButton, homeButton, flexButton, searchButton, flexButton, profileButton, flexButton]
 
         self.view.addSubview(searchResults.collectionView)
         
@@ -62,7 +91,7 @@ class ViewController: UINavigationController {
         NSLayoutConstraint.activate([
             inputField.widthAnchor.constraint(equalToConstant: 240),
             searchBarView.heightAnchor.constraint(equalToConstant: 80),
-            searchBarView.topAnchor.constraint(equalTo: navigationBar.bottomAnchor),
+            searchBarView.topAnchor.constraint(equalTo: navigationBar.topAnchor),
             searchBarView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 15),
             searchBarView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 15),
             searchResults.collectionView.topAnchor.constraint(equalTo: searchBarView.bottomAnchor),
