@@ -7,7 +7,7 @@ build/
 DerivedData/
 
 #Personal Settings
-xcuserdata/*
+BetterReads.xcodeproj/project.xcworkspace/xcuserdata/*
 
 #Config Files
 BetterReads/APIKeys.xcconfig
