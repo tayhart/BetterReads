@@ -7,16 +7,21 @@
 
 import UIKit
 
+protocol SearchResultsDelegate: AnyObject {
+    func didSelectItem(_ book: Book)
+}
+
+struct Book: Hashable {
+    var title: String
+    var author: String
+    var cover: UIImage
+}
+
 class SearchResultsCollectionViewController: UICollectionViewController {
     private enum Section: CaseIterable {
         case main
     }
 
-    struct Book: Hashable {
-        var title: String
-        var author: String
-        var cover: UIImage
-    }
     var data: GoogleBooksResponse?
     var books = [Book]() {
         didSet {
@@ -25,11 +30,14 @@ class SearchResultsCollectionViewController: UICollectionViewController {
     }
 
     private var dataSource: UICollectionViewDiffableDataSource<Section, Book>?
+    weak var delegate: SearchResultsDelegate?
 
-    init() {
+    init(delegate: SearchResultsDelegate?) {
         let configuration = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
         super.init(collectionViewLayout: UICollectionViewCompositionalLayout.list(using: configuration))
+        self.delegate = delegate
 
+        //TODO: move this out of here
         let cellRegistration = UICollectionView.CellRegistration<SearchResultViewCell, Book>
         { cell, indexPath, book in
             cell.configure(
@@ -39,7 +47,7 @@ class SearchResultsCollectionViewController: UICollectionViewController {
             cell.accessories = [.disclosureIndicator()]
         }
 
-        DispatchQueue.main.async { [self] in
+        DispatchQueue.main.async { [self] in //why is this here
             self.dataSource = UICollectionViewDiffableDataSource<Section, Book>(collectionView: self.collectionView)
             { (collectionView, indexPath, book) -> UICollectionViewCell? in
                 return collectionView.dequeueConfiguredReusableCell(
@@ -69,10 +77,14 @@ class SearchResultsCollectionViewController: UICollectionViewController {
     }
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        navigationController?.pushViewController(VolumeDetailsViewController(), animated: true)
+        guard books.indices.contains(indexPath.row) else {
+            //TODO: Something went wrong messaging
+            return
+        }
+        delegate?.didSelectItem(books[indexPath.row])
     }
 
-    func populateWithData(responseData: GoogleBooksResponse) {
+    func populateWithData(responseData: GoogleBooksResponse) { //move to a data controller
         data = responseData
         guard let data = data else { return }
 

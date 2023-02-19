@@ -8,9 +8,11 @@
 import UIKit
 
 //TODO: Rename this. This is the Search Base View Controller
-class ViewController: UINavigationController {
+class ViewController: UIViewController {
     let dataController = DataController()
-    var searchResultsViewController = SearchResultsCollectionViewController()
+    private lazy var searchResultsViewController: SearchResultsCollectionViewController = {
+        SearchResultsCollectionViewController(delegate: self)
+    }()
 
     //Toolbar items
     private lazy var homeButton: UIBarButtonItem = {
@@ -77,11 +79,6 @@ class ViewController: UINavigationController {
 
     init() {
         super.init(nibName: nil, bundle: nil)
-        //Navigation bar Set up
-        navigationBar.isTranslucent = false
-        navigationBar.prefersLargeTitles = true
-        title = "Bookish"
-
         setupViews()
     }
 
@@ -89,14 +86,23 @@ class ViewController: UINavigationController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        //Navigation bar Set up
+        navigationController?.navigationBar.isTranslucent = true
+        navigationController?.navigationBar.prefersLargeTitles = false
+        title = "Bookish"
+
+        toolbarItems = [flexButton, homeButton, flexButton, searchButton, flexButton, profileButton, flexButton]
+        navigationController?.setToolbarHidden(false, animated: false)
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
     }
 
     private func setupViews() {
-        setToolbarHidden(false, animated: false)
-        toolbar.setItems([flexButton, homeButton, flexButton, searchButton, flexButton, profileButton, flexButton], animated: false)
-
         view.backgroundColor = .white
         view.addSubview(searchBarView)
         view.addSubview(searchResultsViewController.collectionView)
@@ -108,10 +114,9 @@ class ViewController: UINavigationController {
             searchBarView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -15),
 
             searchResultsViewController.collectionView.topAnchor.constraint(equalTo: searchBarView.bottomAnchor),
-            searchResultsViewController.collectionView.bottomAnchor.constraint(equalTo: toolbar.topAnchor),
+            searchResultsViewController.collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             searchResultsViewController.collectionView.leftAnchor.constraint(equalTo: view.leftAnchor),
-            searchResultsViewController.collectionView.rightAnchor.constraint(equalTo: view.rightAnchor),
-            searchResultsViewController.collectionView.heightAnchor.constraint(equalToConstant: 400)
+            searchResultsViewController.collectionView.rightAnchor.constraint(equalTo: view.rightAnchor)
         ])
     }
     
@@ -129,5 +134,13 @@ class ViewController: UINavigationController {
     @objc func buttonPressed(sender: UIBarButtonItem) {
         
     }
+}
+
+extension ViewController: SearchResultsDelegate {
+    func didSelectItem(_ book: Book) {
+        let detailsVC = VolumeDetailsViewController(with: book)
+        navigationController?.pushViewController(detailsVC, animated: true)
+    }
+
 }
 

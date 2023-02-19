@@ -8,13 +8,20 @@
 import UIKit
 
 final class VolumeDetailsViewController: UIViewController {
+    var volume: Book
 
-    let testText = "Hello Volume Controller"
+    init(with volume: Book) { //TODO: convert to vm
+        self.volume = volume
+        super.init(nibName: nil, bundle: nil)
+        title = volume.title
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     override func viewDidLoad() {
-        let testLabel = UILabel()
-        testLabel.text = testText
-        view.addSubview(testLabel)
+        view.backgroundColor = .white
     }
 
 }
