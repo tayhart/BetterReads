@@ -16,13 +16,13 @@ final class QuickLookView: UIView {
     }
 
     // MARK: - Variables
-    let book: Book
+    let book: Book //will be a different thing - will be a vm
 
     // MARK: - Views
     private lazy var bookCover: UIImageView = {
-        let view = UIImageView(image: book.cover)
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
+        let cover = UIImageView(image: UIImage(systemName: "book-icon"))
+        cover.translatesAutoresizingMaskIntoConstraints = false
+        return cover
     }()
 
     private lazy var textStack: UIStackView = {
@@ -50,6 +50,12 @@ final class QuickLookView: UIView {
         label.font = UIFont.boldSystemFont(ofSize: 16)
         return label
     }()
+
+    override var intrinsicContentSize: CGSize {
+        let height = bookCover.intrinsicContentSize.height + Constants.spacing
+        let width = Double.maximum(title.intrinsicContentSize.width, author.intrinsicContentSize.width) + bookCover.intrinsicContentSize.width + (Constants.spacing * 3)
+        return CGSize(width: width, height: height)
+    }
 
     // MARK: - Init + View Setup
     init(_ book: Book) {

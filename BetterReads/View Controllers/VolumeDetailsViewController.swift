@@ -31,7 +31,7 @@ final class VolumeDetailsViewController: UIViewController {
             quickLook.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             quickLook.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
             quickLook.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
-            quickLook.heightAnchor.constraint(equalToConstant: quickLook.book.cover.size.height)
+            quickLook.heightAnchor.constraint(equalToConstant: quickLook.intrinsicContentSize.height)
         ])
     }
 

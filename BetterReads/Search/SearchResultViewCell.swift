@@ -8,6 +8,9 @@
 import UIKit
 
 final class SearchResultViewCell: UICollectionViewListCell {
+    private struct Constants {
+        static let coverWidth = 128.0
+    }
 
     private lazy var authorLabel: UILabel = {
         let author = UILabel()
@@ -25,7 +28,14 @@ final class SearchResultViewCell: UICollectionViewListCell {
         return title
     }()
 
-    private var coverImage: UIImageView?
+    private lazy var coverImage: UIImageView = {
+        let cover = UIImageView(image: UIImage(systemName: "book-icon"))
+        cover.translatesAutoresizingMaskIntoConstraints = false
+        cover.contentMode = .scaleAspectFill
+        return cover
+    }()
+
+    private var dataTask: URLSessionDataTask?
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -38,28 +48,31 @@ final class SearchResultViewCell: UICollectionViewListCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func configure(cover: UIImage, author: String, title: String) {
+    func configure(with book: Book) {
         accessories = [.disclosureIndicator()]
-        authorLabel.text = author
-        titleLabel.text = title
-        coverImage = UIImageView(image: cover)
+        authorLabel.text = book.author
+        titleLabel.text = book.title
 
-        guard let coverImage = coverImage else {
-            return
+        if let url = URL(string: book.cover ?? "") {
+            dataTask = URLSession.shared.dataTask(with: url) { [weak self] (data, response, error) in
+                if let data = data {
+                    DispatchQueue.main.async {
+                        self?.coverImage.image = UIImage(data: data)
+                    }
+                }
+            }
+            self.dataTask?.resume()
         }
 
         contentView.addSubview(coverImage)
         contentView.addSubview(authorLabel)
         contentView.addSubview(titleLabel)
-        contentView.layoutMargins = UIEdgeInsets(
-            top: 10,
-            left: 10,
-            bottom: 10,
-            right: 10)
 
         NSLayoutConstraint.activate([
             coverImage.leftAnchor.constraint(equalTo: contentView.leftAnchor),
-            coverImage.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            coverImage.topAnchor.constraint(equalTo: contentView.topAnchor),
+            coverImage.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            coverImage.widthAnchor.constraint(equalToConstant: Constants.coverWidth),
 
             titleLabel.leftAnchor.constraint(equalTo: coverImage.rightAnchor, constant: 10),
             titleLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -5),
@@ -69,5 +82,4 @@ final class SearchResultViewCell: UICollectionViewListCell {
             authorLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 10)
         ])
     }
-
 }
