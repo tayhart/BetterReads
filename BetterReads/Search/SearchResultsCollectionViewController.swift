@@ -7,7 +7,7 @@
 
 import UIKit
 
-class SearchResultsViewController: UICollectionViewController {
+class SearchResultsCollectionViewController: UICollectionViewController {
     private enum Section: CaseIterable {
         case main
     }
@@ -27,40 +27,33 @@ class SearchResultsViewController: UICollectionViewController {
     private var dataSource: UICollectionViewDiffableDataSource<Section, Book>?
 
     init() {
-        super.init(nibName: nil, bundle: nil)
-        let cellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, Book>
-        { cell, indexPath, book in
-            var content = cell.defaultContentConfiguration()
-            content.text = book.title
-            content.secondaryText = book.author
-            content.secondaryTextProperties.color = .secondaryLabel
-            content.secondaryTextProperties.font = UIFont.preferredFont(forTextStyle: .subheadline)
-            content.image = book.cover
+        let configuration = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
+        super.init(collectionViewLayout: UICollectionViewCompositionalLayout.list(using: configuration))
 
-            cell.contentConfiguration = content
+        let cellRegistration = UICollectionView.CellRegistration<SearchResultViewCell, Book>
+        { cell, indexPath, book in
+            cell.configure(
+                cover: book.cover,
+                author: book.author,
+                title: book.title)
             cell.accessories = [.disclosureIndicator()]
         }
 
         DispatchQueue.main.async { [self] in
             self.dataSource = UICollectionViewDiffableDataSource<Section, Book>(collectionView: self.collectionView)
             { (collectionView, indexPath, book) -> UICollectionViewCell? in
-                return collectionView.dequeueConfiguredReusableCell(using:cellRegistration,
-                                                                    for: indexPath,
-                                                                    item: book)
+                return collectionView.dequeueConfiguredReusableCell(
+                    using:cellRegistration,
+                    for: indexPath,
+                    item: book)
             }
         }
 
-        configureLayout()
         collectionView.translatesAutoresizingMaskIntoConstraints = false
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    func configureLayout() {
-        let configuration = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
-        collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: UICollectionViewCompositionalLayout.list(using: configuration)) 
     }
 
     override func viewDidLoad() {
@@ -73,6 +66,10 @@ class SearchResultsViewController: UICollectionViewController {
         snapshot.appendSections(Section.allCases)
         snapshot.appendItems(books)
         dataSource?.apply(snapshot)
+    }
+
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        navigationController?.pushViewController(VolumeDetailsViewController(), animated: true)
     }
 
     func populateWithData(responseData: GoogleBooksResponse) {

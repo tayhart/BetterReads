@@ -10,51 +10,54 @@ import UIKit
 //TODO: Rename this. This is the Search Base View Controller
 class ViewController: UINavigationController {
     let dataController = DataController()
-    var searchResults: SearchResultsViewController = SearchResultsViewController()
+    var searchResultsViewController = SearchResultsCollectionViewController()
 
     //Toolbar items
     private lazy var homeButton: UIBarButtonItem = {
-        var homeIcon = UIImage(named: "home")?.withRenderingMode(.alwaysTemplate)
+        var homeIcon = UIImage(systemName: "house")?.withRenderingMode(.alwaysTemplate)
         let button = UIButton()
-        button.setImage(homeIcon?.withTintColor(.systemTeal, renderingMode: .automatic), for: .normal)
-        button.setImage(homeIcon?.withTintColor(.systemPink, renderingMode: .alwaysTemplate), for: .selected)
-        button.widthAnchor.constraint(equalToConstant: 20).isActive = true
-        button.heightAnchor.constraint(equalToConstant: 20).isActive = true
-        let barButton = UIBarButtonItem(customView: button)
+        let barButton = UIBarButtonItem(
+            image: homeIcon,
+            style: .plain,
+            target: self,
+            action: nil)
+        barButton.tintColor = .systemTeal
         return barButton
     }()
     private lazy var searchButton: UIBarButtonItem = {
-        var icon = UIImage(named: "search")?.withRenderingMode(.alwaysTemplate)
-        let button = UIButton()
-        button.setImage(icon?.withTintColor(.systemTeal, renderingMode: .automatic), for: .normal)
-        button.setImage(icon?.withTintColor(.systemPink, renderingMode: .alwaysTemplate), for: .selected)
-        button.widthAnchor.constraint(equalToConstant: 20).isActive = true
-        button.heightAnchor.constraint(equalToConstant: 20).isActive = true
-        let barButton = UIBarButtonItem(customView: button)
+        var icon = UIImage(systemName: "magnifyingglass")?.withRenderingMode(.alwaysTemplate)
+        let barButton = UIBarButtonItem(
+            image: icon,
+            style: .plain,
+            target: self,
+            action: nil)
+        barButton.tintColor = .systemMint
         return barButton
     }()
     private lazy var profileButton: UIBarButtonItem = {
-        var icon = UIImage(named: "profile")?.withRenderingMode(.alwaysTemplate)
-        let button = UIButton()
-        button.setImage(icon?.withTintColor(.systemTeal, renderingMode: .automatic), for: .normal)
-        button.setImage(icon?.withTintColor(.systemPink, renderingMode: .alwaysTemplate), for: .selected)
-        button.widthAnchor.constraint(equalToConstant: 20).isActive = true
-        button.heightAnchor.constraint(equalToConstant: 20).isActive = true
-        let barButton = UIBarButtonItem(customView: button)
+        var icon = UIImage(systemName: "person")?.withRenderingMode(.alwaysTemplate)
+        let barButton = UIBarButtonItem(
+            image: icon,
+            style: .plain,
+            target: self,
+            action: nil)
+        barButton.tintColor = .systemPink
         return barButton
     }()
     private var flexButton: UIBarButtonItem {
         return UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
     }
-    
-    lazy var searchBarView: UIStackView = {
-        let inputStackView = UIStackView()
+
+    // The container for the input text field and search button
+    private lazy var searchBarView: UIStackView = {
+        let inputStackView = UIStackView(arrangedSubviews: [inputField, initiateQueryButton])
         inputStackView.axis = .horizontal
         inputStackView.translatesAutoresizingMaskIntoConstraints = false
+        inputStackView.backgroundColor = .white
         return inputStackView
     }()
     
-    let inputField: UITextField = {
+    private lazy var inputField: UITextField = {
         var searchField = UITextField()
         searchField.translatesAutoresizingMaskIntoConstraints = false
         searchField.placeholder = "Insert Query..."
@@ -62,42 +65,53 @@ class ViewController: UINavigationController {
         return searchField
     }()
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    private lazy var initiateQueryButton: UIButton = {
+        let button = UIButton(type: .roundedRect)
+        button.setTitle("Search", for: .normal)
+        button.tintColor = .systemMint
+        button.addAction(UIAction(handler: {[weak self] _ in
+            self?.didPressSearchButton()
+        }), for: .touchUpInside)
+        return button
+    }()
 
+    init() {
+        super.init(nibName: nil, bundle: nil)
         //Navigation bar Set up
         navigationBar.isTranslucent = false
         navigationBar.prefersLargeTitles = true
+        title = "Bookish"
 
-        self.view.backgroundColor = .white
-        self.view.addSubview(searchBarView)
-        searchBarView.backgroundColor = .white
+        setupViews()
+    }
 
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
+
+    private func setupViews() {
         setToolbarHidden(false, animated: false)
-        toolbar.backgroundColor = .white
-        toolbar.items = [flexButton, homeButton, flexButton, searchButton, flexButton, profileButton, flexButton]
+        toolbar.setItems([flexButton, homeButton, flexButton, searchButton, flexButton, profileButton, flexButton], animated: false)
 
-        self.view.addSubview(searchResults.collectionView)
-        
-        let searchButton = UIButton(type: .system)
-        searchButton.setTitle("Search", for: .normal)
-        searchButton.addAction(UIAction(handler: {_ in
-            self.didPressSearchButton()
-        }), for: .touchUpInside)
-        
-        searchBarView.addArrangedSubview(inputField)
-        searchBarView.addArrangedSubview(searchButton)
+        view.backgroundColor = .white
+        view.addSubview(searchBarView)
+        view.addSubview(searchResultsViewController.collectionView)
 
         NSLayoutConstraint.activate([
-            inputField.widthAnchor.constraint(equalToConstant: 240),
             searchBarView.heightAnchor.constraint(equalToConstant: 80),
-            searchBarView.topAnchor.constraint(equalTo: navigationBar.topAnchor),
+            searchBarView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             searchBarView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 15),
-            searchBarView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 15),
-            searchResults.collectionView.topAnchor.constraint(equalTo: searchBarView.bottomAnchor),
-            searchResults.collectionView.bottomAnchor.constraint(equalTo: toolbar.topAnchor),
-            searchResults.collectionView.leftAnchor.constraint(equalTo: view.leftAnchor),
-            searchResults.collectionView.rightAnchor.constraint(equalTo: view.rightAnchor)
+            searchBarView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -15),
+
+            searchResultsViewController.collectionView.topAnchor.constraint(equalTo: searchBarView.bottomAnchor),
+            searchResultsViewController.collectionView.bottomAnchor.constraint(equalTo: toolbar.topAnchor),
+            searchResultsViewController.collectionView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            searchResultsViewController.collectionView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            searchResultsViewController.collectionView.heightAnchor.constraint(equalToConstant: 400)
         ])
     }
     
@@ -108,7 +122,7 @@ class ViewController: UINavigationController {
         }
         dataController.request(query, completion: {
             searchResult in
-            self.searchResults.populateWithData(responseData: searchResult)
+            self.searchResultsViewController.populateWithData(responseData: searchResult)
         })
     }
 
