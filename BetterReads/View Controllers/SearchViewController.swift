@@ -8,7 +8,6 @@
 import UIKit
 
 class SearchViewController: UIViewController {
-    let dataController = BooksDataController()
     private lazy var searchResultsViewController: SearchResultsCollectionViewController = {
         SearchResultsCollectionViewController(delegate: self)
     }()
@@ -97,6 +96,10 @@ class SearchViewController: UIViewController {
         navigationController?.setToolbarHidden(false, animated: false)
     }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        navigationController?.navigationBar.isHidden = false
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
     }
@@ -121,13 +124,12 @@ class SearchViewController: UIViewController {
     
     func didPressSearchButton() {
         guard let query = inputField.text else {
-            print("NOTHING TO SHOW")
+            // no-op if query is empty
             return
         }
-        dataController.request(query, completion: {
-            searchResult in
-            self.searchResultsViewController.populateWithData(responseData: searchResult)
-        })
+        searchResultsViewController.viewModel.requestData(for: query) { [weak self] in
+            self?.searchResultsViewController.applySnapshot()
+        }
     }
 
     @objc func buttonPressed(sender: UIBarButtonItem) {
@@ -140,6 +142,4 @@ extension SearchViewController: SearchResultsDelegate {
         let detailsVC = VolumeDetailsViewController(with: book)
         navigationController?.pushViewController(detailsVC, animated: true)
     }
-
 }
-

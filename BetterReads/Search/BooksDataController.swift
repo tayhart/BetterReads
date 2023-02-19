@@ -1,6 +1,6 @@
 //
 //  DataController.swift
-//  mibrary
+//  BetterReads
 //
 //  Created by Taylor Hartman on 3/18/22.
 //
@@ -35,7 +35,7 @@ class BooksDataController {
                 print(error.debugDescription)
                 return
             }
-            
+
             let decoder = JSONDecoder()
             do {
                 let results = try decoder.decode(GoogleBooksResponse.self, from: data!)

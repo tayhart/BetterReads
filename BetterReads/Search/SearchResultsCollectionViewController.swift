@@ -11,23 +11,12 @@ protocol SearchResultsDelegate: AnyObject {
     func didSelectItem(_ book: Book)
 }
 
-struct Book: Hashable {
-    var title: String
-    var author: String
-    var cover: UIImage
-}
-
 class SearchResultsCollectionViewController: UICollectionViewController {
     private enum Section: CaseIterable {
         case main
     }
 
-    var data: GoogleBooksResponse?
-    var books = [Book]() {
-        didSet {
-            applySnapshot()
-        }
-    }
+    var viewModel: SearchResultViewModel = SearchResultViewModel()
 
     private var dataSource: UICollectionViewDiffableDataSource<Section, Book>?
     weak var delegate: SearchResultsDelegate?
@@ -69,48 +58,19 @@ class SearchResultsCollectionViewController: UICollectionViewController {
         applySnapshot(animatingDifferences: false)
     }
 
-    private func applySnapshot(animatingDifferences: Bool = true) {
+    func applySnapshot(animatingDifferences: Bool = true) {
         var snapshot = NSDiffableDataSourceSnapshot<Section, Book>()
         snapshot.appendSections(Section.allCases)
-        snapshot.appendItems(books)
+        snapshot.appendItems(viewModel.quickLookData)
         dataSource?.apply(snapshot)
     }
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard books.indices.contains(indexPath.row) else {
+        guard viewModel.quickLookData.indices.contains(indexPath.row) else {
             //TODO: Something went wrong messaging
             return
         }
-        delegate?.didSelectItem(books[indexPath.row])
-    }
-
-    func populateWithData(responseData: GoogleBooksResponse) { //move to a data controller
-        data = responseData
-        guard let data = data else { return }
-
-        books = data.items.compactMap({ volume in
-            guard let title = volume.volumeInfo.title,
-                  let author = volume.volumeInfo.authors?[0] else {
-                      return nil
-                  }
-
-
-            if let coverURL =  volume.volumeInfo.imageLinks?.thumbnail,
-               let url = URL(string: coverURL) {
-                do {
-                    //TODO: If the image is above a certain size it needs to be resized
-                    //add a constant MAX_HEIGHT to this class that determines how large the image should be
-                    let data = try Data(contentsOf: url)
-                    let cover = UIImage(data: data)
-                    return Book(title: title, author: author, cover: cover ?? UIImage(systemName: "book-icon")!)
-                } catch {
-                    // bummer
-                    return nil
-                }
-            } else {
-                let cover = UIImage(systemName: "book")!
-                return Book(title: title, author: author, cover: cover)
-            }
-        })
+        delegate?.didSelectItem(viewModel.quickLookData[indexPath.row])
+        collectionView.deselectItem(at: indexPath, animated: false)
     }
 }

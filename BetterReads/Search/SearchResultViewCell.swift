@@ -68,7 +68,6 @@ final class SearchResultViewCell: UICollectionViewListCell {
             authorLabel.leftAnchor.constraint(equalTo: titleLabel.leftAnchor),
             authorLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 10)
         ])
-
     }
 
 }
