@@ -8,7 +8,7 @@
 import UIKit
 
 class SearchViewController: UIViewController {
-    let dataController = DataController()
+    let dataController = BooksDataController()
     private lazy var searchResultsViewController: SearchResultsCollectionViewController = {
         SearchResultsCollectionViewController(delegate: self)
     }()

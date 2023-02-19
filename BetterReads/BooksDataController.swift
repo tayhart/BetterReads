@@ -7,7 +7,7 @@
 
 import Foundation
 
-class DataController {
+class BooksDataController {
 
     private struct Constants {
         static let APIKey =  Bundle.main.object(forInfoDictionaryKey: "books_API") as? String
