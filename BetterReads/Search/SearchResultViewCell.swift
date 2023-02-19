@@ -21,6 +21,7 @@ final class SearchResultViewCell: UICollectionViewListCell {
         let title = UILabel()
         title.font = UIFont.preferredFont(forTextStyle: .headline)
         title.translatesAutoresizingMaskIntoConstraints = false
+        title.numberOfLines = 0
         return title
     }()
 
@@ -61,6 +62,7 @@ final class SearchResultViewCell: UICollectionViewListCell {
             coverImage.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
 
             titleLabel.leftAnchor.constraint(equalTo: coverImage.rightAnchor, constant: 10),
+            titleLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -5),
             titleLabel.bottomAnchor.constraint(equalTo: coverImage.centerYAnchor),
 
             authorLabel.leftAnchor.constraint(equalTo: titleLabel.leftAnchor),

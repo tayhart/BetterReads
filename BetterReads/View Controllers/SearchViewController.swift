@@ -7,8 +7,7 @@
 
 import UIKit
 
-//TODO: Rename this. This is the Search Base View Controller
-class ViewController: UIViewController {
+class SearchViewController: UIViewController {
     let dataController = DataController()
     private lazy var searchResultsViewController: SearchResultsCollectionViewController = {
         SearchResultsCollectionViewController(delegate: self)
@@ -56,6 +55,7 @@ class ViewController: UIViewController {
         inputStackView.axis = .horizontal
         inputStackView.translatesAutoresizingMaskIntoConstraints = false
         inputStackView.backgroundColor = .white
+        inputStackView.distribution = .fillProportionally
         return inputStackView
     }()
     
@@ -63,7 +63,7 @@ class ViewController: UIViewController {
         var searchField = UITextField()
         searchField.translatesAutoresizingMaskIntoConstraints = false
         searchField.placeholder = "Insert Query..."
-        
+        searchField.clearButtonMode = .whileEditing
         return searchField
     }()
 
@@ -90,9 +90,8 @@ class ViewController: UIViewController {
         super.viewWillAppear(animated)
 
         //Navigation bar Set up
-        navigationController?.navigationBar.isTranslucent = true
+        navigationController?.navigationBar.isHidden = true
         navigationController?.navigationBar.prefersLargeTitles = false
-        title = "Bookish"
 
         toolbarItems = [flexButton, homeButton, flexButton, searchButton, flexButton, profileButton, flexButton]
         navigationController?.setToolbarHidden(false, animated: false)
@@ -136,7 +135,7 @@ class ViewController: UIViewController {
     }
 }
 
-extension ViewController: SearchResultsDelegate {
+extension SearchViewController: SearchResultsDelegate {
     func didSelectItem(_ book: Book) {
         let detailsVC = VolumeDetailsViewController(with: book)
         navigationController?.pushViewController(detailsVC, animated: true)
