@@ -138,8 +138,9 @@ class SearchViewController: UIViewController {
 }
 
 extension SearchViewController: SearchResultsDelegate {
-    func didSelectItem(_ book: Book) {
-        let detailsVC = VolumeDetailsViewController(with: book)
+    func openVolumeDetails(for volume: GoogleBooksResponse.Volume) {
+        let detailsVM = DetailsViewModel(volume)
+        let detailsVC = VolumeDetailsViewController(viewModel: detailsVM)
         navigationController?.pushViewController(detailsVC, animated: true)
     }
 }

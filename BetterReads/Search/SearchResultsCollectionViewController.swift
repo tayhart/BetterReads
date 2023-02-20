@@ -8,7 +8,7 @@
 import UIKit
 
 protocol SearchResultsDelegate: AnyObject {
-    func didSelectItem(_ book: Book)
+    func openVolumeDetails(for volume: GoogleBooksResponse.Volume)
 }
 
 class SearchResultsCollectionViewController: UICollectionViewController {
@@ -62,11 +62,11 @@ class SearchResultsCollectionViewController: UICollectionViewController {
     }
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard viewModel.quickLookData.indices.contains(indexPath.row) else {
-            //TODO: Something went wrong messaging
+        guard let volume = viewModel.getVolumeDataForIndex(indexPath) else {
+            // TODO: Error messaging
             return
         }
-        delegate?.didSelectItem(viewModel.quickLookData[indexPath.row])
+        delegate?.openVolumeDetails(for: volume)
         collectionView.deselectItem(at: indexPath, animated: false)
     }
 }

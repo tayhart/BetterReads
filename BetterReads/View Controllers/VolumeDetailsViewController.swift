@@ -6,22 +6,23 @@
 //
 
 import UIKit
+import Combine
 
 final class VolumeDetailsViewController: UIViewController {
-    var volume: Book
-
     /// Quick look container contains the "Quick look" of the book and shows the following:
     /// - Book Cover
     /// - Series + #
     /// - Author
     /// - Length
-    let quickLook: QuickLookView
+    var quickLook: QuickLookView = QuickLookView()
+    var coverSink: AnyCancellable?
 
-    init(with volume: Book) { //TODO: convert to vm
-        self.volume = volume
-        quickLook = QuickLookView(volume)
+    private var viewModel: DetailsViewModel
+
+    init(viewModel: DetailsViewModel) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
-        title = volume.title
+        title = viewModel.getTitle()
         setupView()
     }
 
@@ -41,6 +42,18 @@ final class VolumeDetailsViewController: UIViewController {
 
     override func viewDidLoad() {
         view.backgroundColor = .white
+        quickLook.setAuthors(authors: viewModel.getAuthorString())
+
+        // Subscribe to the cover image being downloaded
+        coverSink = viewModel.coverImageSubject.sink { [weak self] in
+            guard let cover = $0 else {
+                return
+            }
+            self?.quickLook.setBookCover(cover: cover)
+        }
+        viewModel.downloadCoverImage()
+
+        view.layoutIfNeeded()
     }
 
 }

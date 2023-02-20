@@ -12,11 +12,10 @@ final class QuickLookView: UIView {
     private struct Constants {
         static let spacing = 10.0
         static let bookInformationSpacing = 8.0
-        static let defaultImageWidth: CGFloat = 65.0
+        static let defaultImageWidth: CGFloat = 128.0
     }
 
     // MARK: - Variables
-    let book: Book //will be a different thing - will be a vm
 
     // MARK: - Views
     private lazy var bookCover: UIImageView = {
@@ -31,22 +30,19 @@ final class QuickLookView: UIView {
         view.alignment = .leading
         view.translatesAutoresizingMaskIntoConstraints = false
         view.spacing = Constants.bookInformationSpacing
-
-        view.addArrangedSubview(title)
-        view.addArrangedSubview(author)
         return view
     }()
 
     private lazy var author: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = book.author
+        label.text = "Loading..."
         return label
     }()
 
     private lazy var title: UILabel = {
         let label = UILabel()
-        label.text = book.title
+        label.text = "Loading..."
         label.font = UIFont.boldSystemFont(ofSize: 16)
         return label
     }()
@@ -58,25 +54,48 @@ final class QuickLookView: UIView {
     }
 
     // MARK: - Init + View Setup
-    init(_ book: Book) {
-        self.book = book
+    init() {
         super.init(frame: .zero)
         self.translatesAutoresizingMaskIntoConstraints = false
+        setupView()
+    }
 
+    private func setupView() {
         addSubview(bookCover)
         addSubview(textStack)
 
         NSLayoutConstraint.activate([
             bookCover.topAnchor.constraint(equalTo: self.topAnchor, constant: Constants.spacing),
             bookCover.leftAnchor.constraint(equalTo: self.leftAnchor, constant: Constants.spacing),
-            bookCover.widthAnchor.constraint(equalToConstant: Double(bookCover.image?.size.width ?? Constants.defaultImageWidth)),
-            bookCover.heightAnchor.constraint(equalToConstant: Double(bookCover.image?.size.height ?? Constants.defaultImageWidth)),
             bookCover.bottomAnchor.constraint(equalTo: self.bottomAnchor),
 
             textStack.leftAnchor.constraint(equalTo: bookCover.rightAnchor, constant: Constants.spacing),
             textStack.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -Constants.spacing),
             textStack.centerYAnchor.constraint(equalTo: bookCover.centerYAnchor)
         ])
+    }
+
+    func setBookCover(cover: UIImage) {
+        let group = DispatchGroup()
+        group.enter()
+
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            self.bookCover.image = cover
+            self.bookCover.widthAnchor.constraint(equalToConstant: Double(cover.size.width)).isActive = true
+            self.bookCover.heightAnchor.constraint(equalToConstant: Double(cover.size.height)).isActive = true
+
+            group.leave()
+        }
+        group.notify(queue: .main) { [weak self] in
+            self?.layoutIfNeeded()
+        }
+    }
+
+    func setAuthors(authors: String) {
+        author.text = authors
+        textStack.addArrangedSubview(author)
+        setNeedsLayout()
     }
     
     required init?(coder: NSCoder) {

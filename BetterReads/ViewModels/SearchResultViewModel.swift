@@ -33,12 +33,21 @@ final class SearchResultViewModel {
             return Book(title: title, author: author, cover: coverURL)
         })
     }
-    
 
     func requestData(for query: String, completion: @escaping (() -> Void)) {
         dataController.request(query, completion: { [weak self, completion] searchResult in
             self?.data = searchResult
             completion()
         })
+    }
+
+    func getVolumeDataForIndex(_ indexPath: IndexPath) -> GoogleBooksResponse.Volume? {
+        guard let data = data,
+              data.items.indices.contains(indexPath.row)
+        else {
+            return nil
+        }
+
+        return data.items[indexPath.row]
     }
 }
