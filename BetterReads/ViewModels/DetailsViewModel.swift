@@ -13,15 +13,19 @@ final class DetailsViewModel {
     private var volume: GoogleBooksResponse.Volume
     let coverImageSubject = PassthroughSubject<UIImage?, Never>()
 
-    init(_ volume: GoogleBooksResponse.Volume) {
-        self.volume = volume
+    var description: String {
+        return volume.volumeInfo.description ?? "No description available"
     }
 
-    func getTitle() -> String? {
-        return volume.volumeInfo.title
+    var numberOfPages: Int? {
+        return volume.volumeInfo.pageCount
     }
 
-    func getAuthorString() -> String {
+    var title: String {
+        return volume.volumeInfo.title ?? "Unknown"
+    }
+
+    var authors: String {
         guard let authors = volume.volumeInfo.authors else {
             return "No author found"
         }
@@ -31,6 +35,10 @@ final class DetailsViewModel {
             }
             return $0 + " ,"
         }.joined()
+    }
+
+    init(_ volume: GoogleBooksResponse.Volume) {
+        self.volume = volume
     }
 
     func downloadCoverImage() {
@@ -45,6 +53,7 @@ final class DetailsViewModel {
                 // download error
                 return
             }
+
             do {
                 let file = cache.appendingPathComponent("\(UUID().uuidString).jpg")
 

@@ -8,16 +8,40 @@
 import Foundation
 import UIKit
 
+/// Quick look container contains the "Quick look" of the book and shows the following:
+/// - Book Cover
+/// - Author
 final class QuickLookView: UIView {
     private struct Constants {
-        static let spacing = 10.0
-        static let bookInformationSpacing = 8.0
+        static let spacing = 12.0
+        static let bookInformationSpacing = 10.0
         static let defaultImageWidth: CGFloat = 128.0
     }
 
     // MARK: - Variables
-
+    var bookCenterYAnchor: NSLayoutYAxisAnchor {
+        return bookCover.centerYAnchor
+    }
     // MARK: - Views
+
+    /// The container holds the book cover and also adds some basic design elements like a border
+    private lazy var bookCoverContainer: UIView = {
+        let container = UIView()
+        container.translatesAutoresizingMaskIntoConstraints = false
+        container.addSubview(bookCover)
+        container.backgroundColor = .cream
+        container.layer.borderColor = UIColor.black.cgColor
+        container.layer.borderWidth = 2.0
+
+        NSLayoutConstraint.activate([
+            container.leftAnchor.constraint(equalTo: bookCover.leftAnchor, constant: -10),
+            container.topAnchor.constraint(equalTo: bookCover.topAnchor, constant: -10),
+            container.rightAnchor.constraint(equalTo: bookCover.rightAnchor, constant: 10),
+            container.bottomAnchor.constraint(equalTo: bookCover.bottomAnchor, constant: 10)
+        ])
+        return container
+    }()
+
     private lazy var bookCover: UIImageView = {
         let cover = UIImageView(image: UIImage(systemName: "book-icon"))
         cover.translatesAutoresizingMaskIntoConstraints = false
@@ -27,31 +51,27 @@ final class QuickLookView: UIView {
     private lazy var textStack: UIStackView = {
         let view = UIStackView()
         view.axis = .vertical
-        view.alignment = .leading
+        view.alignment = .center
         view.translatesAutoresizingMaskIntoConstraints = false
         view.spacing = Constants.bookInformationSpacing
         return view
     }()
 
-    private lazy var author: UILabel = {
+    private lazy var authorLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "Loading..."
+        label.apply(type: .subHeader)
         return label
     }()
 
-    private lazy var title: UILabel = {
+    private lazy var titleLabel: UILabel = {
         let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "Loading..."
-        label.font = UIFont.boldSystemFont(ofSize: 16)
+        label.apply(type: .headerBig)
         return label
     }()
-
-    override var intrinsicContentSize: CGSize {
-        let height = bookCover.intrinsicContentSize.height + Constants.spacing
-        let width = Double.maximum(title.intrinsicContentSize.width, author.intrinsicContentSize.width) + bookCover.intrinsicContentSize.width + (Constants.spacing * 3)
-        return CGSize(width: width, height: height)
-    }
 
     // MARK: - Init + View Setup
     init() {
@@ -61,17 +81,20 @@ final class QuickLookView: UIView {
     }
 
     private func setupView() {
-        addSubview(bookCover)
+        addSubview(bookCoverContainer)
         addSubview(textStack)
+        textStack.addArrangedSubview(titleLabel)
+        textStack.addArrangedSubview(authorLabel)
 
         NSLayoutConstraint.activate([
-            bookCover.topAnchor.constraint(equalTo: self.topAnchor, constant: Constants.spacing),
-            bookCover.leftAnchor.constraint(equalTo: self.leftAnchor, constant: Constants.spacing),
-            bookCover.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+            bookCoverContainer.centerXAnchor.constraint(equalTo: self.centerXAnchor, constant: Constants.spacing),
+            bookCoverContainer.topAnchor.constraint(equalTo: self.topAnchor, constant: Constants.spacing),
 
-            textStack.leftAnchor.constraint(equalTo: bookCover.rightAnchor, constant: Constants.spacing),
-            textStack.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -Constants.spacing),
-            textStack.centerYAnchor.constraint(equalTo: bookCover.centerYAnchor)
+            textStack.centerXAnchor.constraint(equalTo: bookCover.centerXAnchor),
+            textStack.leftAnchor.constraint(greaterThanOrEqualTo: self.leftAnchor, constant: Constants.spacing),
+            textStack.rightAnchor.constraint(lessThanOrEqualTo: self.rightAnchor, constant: -Constants.spacing),
+            textStack.topAnchor.constraint(equalTo: bookCover.bottomAnchor, constant: 16),
+            textStack.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -Constants.spacing)
         ])
     }
 
@@ -92,10 +115,9 @@ final class QuickLookView: UIView {
         }
     }
 
-    func setAuthors(authors: String) {
-        author.text = authors
-        textStack.addArrangedSubview(author)
-        setNeedsLayout()
+    func setTitleAndAuthors(title: String, authors: String) {
+        titleLabel.text = title
+        authorLabel.text = authors
     }
     
     required init?(coder: NSCoder) {
