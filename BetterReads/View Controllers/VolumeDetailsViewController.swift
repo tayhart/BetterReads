@@ -47,7 +47,7 @@ final class VolumeDetailsViewController: UIViewController {
         let container = UIView()
         container.translatesAutoresizingMaskIntoConstraints = false
         container.addSubview(detailedDescription)
-        container.backgroundColor = .cream
+        container.backgroundColor = .ivory
         container.layer.borderColor = UIColor.black.cgColor
         container.layer.borderWidth = 2.0
 

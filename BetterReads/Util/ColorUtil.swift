@@ -11,8 +11,12 @@ extension UIColor {
     static let primaryAccentColor = UIColor.systemMint
     static let secondaryAccentColor = UIColor.systemYellow
 
-    static let ivory = UIColor(red: 255.0, green: 255.0, blue: 240.0, alpha: 1.0)
-    static let cream = UIColor(red: 255, green: 253, blue: 208, alpha: 1.0)
-    static let lavendarBlue = UIColor(red: 208, green: 210, blue: 255, alpha: 1.0)
-    static let pistachio = UIColor(red: 147, green: 197, blue: 114, alpha: 1.0)
+    static let ivory = UIColor(r: 255.0, g: 255.0, b: 240.0)
+    static let cream = UIColor(r: 255, g: 253, b: 208)
+    static let lavendarBlue = UIColor(r: 208, g: 210, b: 255)
+    static let pistachio = UIColor(r: 147, g: 197, b: 114)
+
+    convenience init(r: CGFloat, g: CGFloat, b: CGFloat) {
+        self.init(red: r/255.0, green: g/255.0, blue: b/255.0, alpha: 1.0)
+    }
 }

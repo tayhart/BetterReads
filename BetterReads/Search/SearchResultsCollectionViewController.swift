@@ -32,14 +32,13 @@ class SearchResultsCollectionViewController: UICollectionViewController {
             cell.accessories = [.disclosureIndicator()]
         }
 
-        DispatchQueue.main.async { [self] in //why is this here?
-            self.dataSource = UICollectionViewDiffableDataSource<Section, Book>(collectionView: self.collectionView)
-            { (collectionView, indexPath, book) -> UICollectionViewCell? in
-                return collectionView.dequeueConfiguredReusableCell(
-                    using:cellRegistration,
-                    for: indexPath,
-                    item: book)
-            }
+
+        self.dataSource = UICollectionViewDiffableDataSource<Section, Book>(collectionView: self.collectionView)
+        { (collectionView, indexPath, book) -> UICollectionViewCell? in
+            return collectionView.dequeueConfiguredReusableCell(
+                using: cellRegistration,
+                for: indexPath,
+                item: book)
         }
 
         collectionView.translatesAutoresizingMaskIntoConstraints = false
