@@ -48,32 +48,18 @@ class SearchViewController: UIViewController {
         return UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
     }
 
-    // The container for the input text field and search button
-    private lazy var searchBarView: UIStackView = {
-        let inputStackView = UIStackView(arrangedSubviews: [inputField, initiateQueryButton])
-        inputStackView.axis = .horizontal
-        inputStackView.translatesAutoresizingMaskIntoConstraints = false
-        inputStackView.backgroundColor = .white
-        inputStackView.distribution = .fillProportionally
-        return inputStackView
-    }()
-    
-    private lazy var inputField: UITextField = {
-        var searchField = UITextField()
-        searchField.translatesAutoresizingMaskIntoConstraints = false
-        searchField.placeholder = "Insert Query..."
-        searchField.clearButtonMode = .whileEditing
-        return searchField
-    }()
-
-    private lazy var initiateQueryButton: UIButton = {
-        let button = UIButton(type: .roundedRect)
-        button.setTitle("Search", for: .normal)
-        button.tintColor = .systemMint
-        button.addAction(UIAction(handler: {[weak self] _ in
-            self?.didPressSearchButton()
-        }), for: .touchUpInside)
-        return button
+    //Search Bar
+    private lazy var searchBar: UISearchBar = {
+        let bar = UISearchBar()
+        bar.translatesAutoresizingMaskIntoConstraints = false
+        bar.delegate = self
+        bar.placeholder = "Search for a book or author"
+        bar.searchBarStyle = .minimal
+        bar.tintAdjustmentMode = .normal
+        bar.contentMode = .center
+        bar.tintColor = .primaryAccentColor
+        bar.autocapitalizationType = .words
+        return bar
     }()
 
     init() {
@@ -105,31 +91,20 @@ class SearchViewController: UIViewController {
     }
 
     private func setupViews() {
-        view.backgroundColor = .white
-        view.addSubview(searchBarView)
+        view.backgroundColor = .systemBackground
+        view.addSubview(searchBar)
         view.addSubview(searchResultsViewController.collectionView)
 
         NSLayoutConstraint.activate([
-            searchBarView.heightAnchor.constraint(equalToConstant: 80),
-            searchBarView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            searchBarView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 15),
-            searchBarView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -15),
+            searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            searchBar.leftAnchor.constraint(equalTo: view.leftAnchor),
+            searchBar.rightAnchor.constraint(equalTo: view.rightAnchor),
 
-            searchResultsViewController.collectionView.topAnchor.constraint(equalTo: searchBarView.bottomAnchor),
+            searchResultsViewController.collectionView.topAnchor.constraint(equalTo: searchBar.bottomAnchor),
             searchResultsViewController.collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             searchResultsViewController.collectionView.leftAnchor.constraint(equalTo: view.leftAnchor),
             searchResultsViewController.collectionView.rightAnchor.constraint(equalTo: view.rightAnchor)
         ])
-    }
-    
-    func didPressSearchButton() {
-        guard let query = inputField.text else {
-            // no-op if query is empty
-            return
-        }
-        searchResultsViewController.viewModel.requestData(for: query) { [weak self] in
-            self?.searchResultsViewController.applySnapshot()
-        }
     }
 
     @objc func buttonPressed(sender: UIBarButtonItem) {
@@ -137,6 +112,36 @@ class SearchViewController: UIViewController {
     }
 }
 
+// MARK: -
+extension SearchViewController: UISearchBarDelegate {
+    func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
+        searchBar.setShowsCancelButton(true, animated: true)
+        return true
+    }
+
+    func searchBarShouldEndEditing(_ searchBar: UISearchBar) -> Bool {
+        searchBar.setShowsCancelButton(false, animated: true)
+        return true
+    }
+
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.endEditing(true)
+        searchBar.setShowsCancelButton(false, animated: true)
+    }
+
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        guard let query = searchBar.text else {
+            // no-op if query is empty
+            return
+        }
+        searchBar.endEditing(true)
+        searchResultsViewController.viewModel.requestData(for: query) { [weak self] in
+            self?.searchResultsViewController.applySnapshot()
+        }
+    }
+}
+
+// MARK: - SearchResultsDelegate
 extension SearchViewController: SearchResultsDelegate {
     func openVolumeDetails(for volume: GoogleBooksResponse.Volume) {
         let detailsVM = DetailsViewModel(volume)

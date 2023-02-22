@@ -83,6 +83,7 @@ final class VolumeDetailsViewController: UIViewController {
     init(viewModel: DetailsViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
+        view.backgroundColor = .primaryBackgroundColor
         setupView()
     }
 
@@ -129,7 +130,7 @@ final class VolumeDetailsViewController: UIViewController {
 
     // MARK: View Controller Lifecycle
     override func viewDidLoad() {
-        view.backgroundColor = .white
+        view.backgroundColor = .systemBackground
         quickLook.setTitleAndAuthors(title: viewModel.title, authors: viewModel.authors)
 
         // Subscribe to the cover image being downloaded

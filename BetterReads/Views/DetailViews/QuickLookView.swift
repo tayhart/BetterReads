@@ -62,6 +62,7 @@ final class QuickLookView: UIView {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "Loading..."
         label.apply(type: .subHeader)
+        label.textColor = .black
         return label
     }()
 
@@ -70,6 +71,7 @@ final class QuickLookView: UIView {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "Loading..."
         label.apply(type: .headerBig)
+        label.textColor = .black
         return label
     }()
 
