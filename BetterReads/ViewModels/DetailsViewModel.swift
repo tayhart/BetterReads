@@ -42,7 +42,10 @@ final class DetailsViewModel {
     }
 
     func downloadCoverImage() {
-        guard let urlString = volume.volumeInfo.imageLinks?.medium ?? volume.volumeInfo.imageLinks?.thumbnail,
+        guard let urlString = volume.volumeInfo.imageLinks?.large ??
+                volume.volumeInfo.imageLinks?.medium ??
+                volume.volumeInfo.imageLinks?.small ??
+                volume.volumeInfo.imageLinks?.thumbnail,
               let url = URL(string: urlString) else {
             return
         }

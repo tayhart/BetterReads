@@ -22,9 +22,9 @@ class SearchResultsCollectionViewController: UICollectionViewController {
     weak var delegate: SearchResultsDelegate?
 
     init(delegate: SearchResultsDelegate?) {
-        let configuration = UICollectionLayoutListConfiguration(appearance: .plain)
-        super.init(collectionViewLayout: UICollectionViewCompositionalLayout.list(using: configuration))
+        super.init(collectionViewLayout: SearchResultsCollectionViewController.layout())
         self.delegate = delegate
+        collectionView.backgroundColor = .clear
 
         let cellRegistration = UICollectionView.CellRegistration<SearchResultViewCell, Book>
         { cell, indexPath, book in
@@ -46,6 +46,26 @@ class SearchResultsCollectionViewController: UICollectionViewController {
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    private static func layout() -> UICollectionViewCompositionalLayout {
+        let itemSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .fractionalHeight(1.0))
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+
+        let groupSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .estimated(225))
+        let group = NSCollectionLayoutGroup.horizontal(
+            layoutSize: groupSize,
+            subitems: [item])
+        let section = NSCollectionLayoutSection(group: group)
+        section.interGroupSpacing = 15
+        section.contentInsets = NSDirectionalEdgeInsets(top: 15, leading: 15, bottom: 15, trailing: 15)
+
+        let layout = UICollectionViewCompositionalLayout(section: section)
+        return layout
     }
 
     override func viewDidLoad() {

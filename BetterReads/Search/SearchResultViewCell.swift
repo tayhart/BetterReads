@@ -9,7 +9,7 @@ import UIKit
 
 final class SearchResultViewCell: UICollectionViewListCell {
     private struct Constants {
-        static let coverWidth = 128.0
+        static let coverWidthMax = 135.0
     }
 
     private lazy var authorLabel: UILabel = {
@@ -31,7 +31,7 @@ final class SearchResultViewCell: UICollectionViewListCell {
     private lazy var coverImage: UIImageView = {
         let cover = UIImageView(image: UIImage(systemName: "book-icon"))
         cover.translatesAutoresizingMaskIntoConstraints = false
-        cover.contentMode = .scaleAspectFill
+        cover.contentMode = .scaleAspectFit
         return cover
     }()
 
@@ -40,7 +40,13 @@ final class SearchResultViewCell: UICollectionViewListCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        contentView.layer.cornerRadius = 8
+        self.layer.cornerRadius = 8
+
+        var backgroundConfig = UIBackgroundConfiguration.listPlainCell()
+        backgroundConfig.backgroundColor = .ivory
+        self.backgroundConfiguration = backgroundConfig
+        self.layer.borderColor = UIColor.black.cgColor
+        self.layer.borderWidth = 2.0
     }
 
     @available(*, unavailable)
@@ -49,7 +55,6 @@ final class SearchResultViewCell: UICollectionViewListCell {
     }
 
     func configure(with book: Book) {
-        accessories = [.disclosureIndicator()]
         authorLabel.text = book.author
         titleLabel.text = book.title
 
@@ -69,13 +74,13 @@ final class SearchResultViewCell: UICollectionViewListCell {
         contentView.addSubview(titleLabel)
 
         NSLayoutConstraint.activate([
-            coverImage.leftAnchor.constraint(equalTo: contentView.leftAnchor),
-            coverImage.topAnchor.constraint(equalTo: contentView.topAnchor),
-            coverImage.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            coverImage.widthAnchor.constraint(equalToConstant: Constants.coverWidth),
+            coverImage.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 10),
+            coverImage.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
+            coverImage.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
+            coverImage.widthAnchor.constraint(lessThanOrEqualToConstant: Constants.coverWidthMax),
 
-            titleLabel.leftAnchor.constraint(equalTo: coverImage.rightAnchor, constant: 10),
-            titleLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -5),
+            titleLabel.leftAnchor.constraint(equalTo: coverImage.rightAnchor, constant: 15),
+            titleLabel.rightAnchor.constraint(lessThanOrEqualTo: contentView.rightAnchor, constant: -5),
             titleLabel.bottomAnchor.constraint(equalTo: coverImage.centerYAnchor),
 
             authorLabel.leftAnchor.constraint(equalTo: titleLabel.leftAnchor),

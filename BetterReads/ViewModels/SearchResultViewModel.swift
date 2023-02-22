@@ -25,12 +25,7 @@ final class SearchResultViewModel {
                   let author = volume.volumeInfo.authors?[0] else {
                 return nil
             }
-
-            guard let coverURL =  volume.volumeInfo.imageLinks?.thumbnail else {
-                return Book(title: title, author: author, cover: nil)
-            }
-
-            return Book(title: title, author: author, cover: coverURL)
+            return Book(title: title, author: author, cover: volume.volumeInfo.imageLinks?.thumbnail)
         })
     }
 
