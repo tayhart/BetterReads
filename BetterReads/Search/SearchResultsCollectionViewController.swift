@@ -29,9 +29,7 @@ class SearchResultsCollectionViewController: UICollectionViewController {
         let cellRegistration = UICollectionView.CellRegistration<SearchResultViewCell, Book>
         { cell, indexPath, book in
             cell.configure(with: book)
-            cell.accessories = [.disclosureIndicator()]
         }
-
 
         self.dataSource = UICollectionViewDiffableDataSource<Section, Book>(collectionView: self.collectionView)
         { (collectionView, indexPath, book) -> UICollectionViewCell? in

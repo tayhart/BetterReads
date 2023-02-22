@@ -65,6 +65,7 @@ final class VolumeDetailsViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
         label.text = viewModel.description
+        label.textColor = .black
         label.apply(type: .body)
         label.backgroundColor = .clear
         return label

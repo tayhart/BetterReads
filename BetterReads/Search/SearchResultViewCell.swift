@@ -14,7 +14,7 @@ final class SearchResultViewCell: UICollectionViewListCell {
 
     private lazy var authorLabel: UILabel = {
         let author = UILabel()
-        author.textColor = .secondaryLabel
+        author.textColor = .black
         author.font = UIFont.preferredFont(forTextStyle: .subheadline)
         author.translatesAutoresizingMaskIntoConstraints = false
         return author
@@ -23,6 +23,7 @@ final class SearchResultViewCell: UICollectionViewListCell {
     private lazy var titleLabel: UILabel = {
         let title = UILabel()
         title.font = UIFont.preferredFont(forTextStyle: .headline)
+        title.textColor = .black
         title.translatesAutoresizingMaskIntoConstraints = false
         title.numberOfLines = 0
         return title
@@ -47,6 +48,14 @@ final class SearchResultViewCell: UICollectionViewListCell {
         self.backgroundConfiguration = backgroundConfig
         self.layer.borderColor = UIColor.black.cgColor
         self.layer.borderWidth = 2.0
+
+        let disclosureImage = UIImage.chevronRightImage.withRenderingMode(.alwaysTemplate)
+        let customAccessory = UICellAccessory.CustomViewConfiguration(
+            customView: UIImageView(image: disclosureImage),
+            placement: .trailing(displayed: .always))
+
+        self.tintColor = .black
+        self.accessories = [.customView(configuration: customAccessory)]
     }
 
     @available(*, unavailable)
