@@ -40,7 +40,7 @@ class SearchViewController: UIViewController {
             image: icon,
             style: .plain,
             target: self,
-            action: nil)
+            action: #selector(profileButtonPressed(sender:)))
         barButton.tintColor = .systemPink
         return barButton
     }()
@@ -107,12 +107,12 @@ class SearchViewController: UIViewController {
         ])
     }
 
-    @objc func buttonPressed(sender: UIBarButtonItem) {
-        
+    @objc func profileButtonPressed(sender: UIBarButtonItem) {
+        navigationController?.pushViewController(ProfileViewController(), animated: true)
     }
 }
 
-// MARK: -
+// MARK: - UISearchBarDelegate
 extension SearchViewController: UISearchBarDelegate {
     func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
         searchBar.setShowsCancelButton(true, animated: true)
