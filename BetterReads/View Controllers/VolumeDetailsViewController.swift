@@ -12,6 +12,7 @@ final class VolumeDetailsViewController: UIViewController {
     private struct Constants {
         static let spacing = 14.0
         static let descriptionMargin = 25.0
+        static let margins = 10.0
     }
 
     // MARK: - Design Motifs
@@ -43,32 +44,22 @@ final class VolumeDetailsViewController: UIViewController {
     // MARK: UI Views
     private var quickLook: QuickLookView = QuickLookView()
 
-    private lazy var descriptionContainer: UIView = {
-        let container = UIView()
-        container.translatesAutoresizingMaskIntoConstraints = false
-        container.addSubview(detailedDescription)
-        container.backgroundColor = .ivory
-        container.layer.borderColor = UIColor.black.cgColor
-        container.layer.borderWidth = 2.0
-
-        NSLayoutConstraint.activate([
-            detailedDescription.leftAnchor.constraint(equalTo: container.leftAnchor, constant: 10),
-            detailedDescription.rightAnchor.constraint(equalTo: container.rightAnchor, constant: -10),
-            detailedDescription.topAnchor.constraint(equalTo: container.topAnchor, constant: 10),
-            detailedDescription.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -10)
-        ])
-        return container
-    }()
-
-    private lazy var detailedDescription: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.numberOfLines = 0
-        label.text = viewModel.description
-        label.textColor = .black
-        label.apply(type: .body)
-        label.backgroundColor = .clear
-        return label
+    private lazy var detailedDescription: UITextView = {
+        let description = UITextView()
+        description.translatesAutoresizingMaskIntoConstraints = false
+        description.text = viewModel.description
+        description.textColor = .black
+        description.backgroundColor = .ivory
+        description.layer.borderColor = UIColor.black.cgColor
+        description.layer.borderWidth = 2.0
+        description.contentInset = UIEdgeInsets(
+            top: Constants.margins,
+            left: Constants.margins,
+            bottom: Constants.margins,
+            right: Constants.margins)
+        description.apply(type: .body)
+        description.isEditable = false
+        return description
     }()
 
     // MARK: Variables
@@ -89,7 +80,7 @@ final class VolumeDetailsViewController: UIViewController {
 
     private func setupView() {
         view.addSubview(quickLook)
-        view.addSubview(descriptionContainer)
+        view.addSubview(detailedDescription)
         setupBackgroundDesign() // setup design motifs
 
         NSLayoutConstraint.activate([
@@ -98,16 +89,16 @@ final class VolumeDetailsViewController: UIViewController {
             quickLook.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
             quickLook.bottomAnchor.constraint(lessThanOrEqualTo: view.safeAreaLayoutGuide.bottomAnchor),
 
-            descriptionContainer.topAnchor.constraint(equalTo: quickLook.bottomAnchor, constant: Constants.descriptionMargin),
-            descriptionContainer.leftAnchor.constraint(equalTo: view.leftAnchor, constant: Constants.descriptionMargin),
-            descriptionContainer.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -Constants.descriptionMargin),
-            descriptionContainer.bottomAnchor.constraint(lessThanOrEqualTo: view.bottomAnchor)
+            detailedDescription.topAnchor.constraint(equalTo: quickLook.bottomAnchor, constant: Constants.descriptionMargin),
+            detailedDescription.leftAnchor.constraint(equalTo: view.leftAnchor, constant: Constants.descriptionMargin),
+            detailedDescription.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -Constants.descriptionMargin),
+            detailedDescription.heightAnchor.constraint(equalToConstant: 350)
         ])
     }
 
     private func setupBackgroundDesign() {
         view.insertSubview(primaryAccentBackgroundDesignElement, belowSubview: quickLook)
-        view.insertSubview(secondaryAccentBackgroundDesignElement, belowSubview: descriptionContainer)
+        view.insertSubview(secondaryAccentBackgroundDesignElement, belowSubview: detailedDescription)
         view.insertSubview(horizontalBar, belowSubview: quickLook)
 
         NSLayoutConstraint.activate([
@@ -116,7 +107,7 @@ final class VolumeDetailsViewController: UIViewController {
             primaryAccentBackgroundDesignElement.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
             primaryAccentBackgroundDesignElement.bottomAnchor.constraint(equalTo: view.bottomAnchor),
 
-            secondaryAccentBackgroundDesignElement.topAnchor.constraint(equalTo: descriptionContainer.topAnchor, constant: -20),
+            secondaryAccentBackgroundDesignElement.topAnchor.constraint(equalTo: detailedDescription.topAnchor, constant: -20),
             secondaryAccentBackgroundDesignElement.leftAnchor.constraint(equalTo: view.leftAnchor),
             secondaryAccentBackgroundDesignElement.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             secondaryAccentBackgroundDesignElement.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -10),

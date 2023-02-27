@@ -5,7 +5,6 @@
 //  Created by Taylor Hartman on 2/18/23.
 //
 
-import Foundation
 import UIKit
 
 /// Quick look container contains the "Quick look" of the book and shows the following:
