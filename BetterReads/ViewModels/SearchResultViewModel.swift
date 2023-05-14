@@ -9,7 +9,7 @@ import UIKit
 
 struct Book: Hashable {
     var title: String
-    var author: String //make an array to account for multiple authors
+    var author: String // TODO: make an array to account for multiple authors
     var cover: String?
 }
 

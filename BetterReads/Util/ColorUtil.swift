@@ -8,7 +8,7 @@
 import UIKit
 
 extension UIColor {
-    static let primaryBackgroundColor = moonstoneBlue
+    static let primaryBackgroundColor = UIColor.systemBackground
     static let primaryAccentColor = richLavendar
     static let secondaryAccentColor = pistachio
 

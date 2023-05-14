@@ -10,6 +10,7 @@ import UIKit
 final class SearchResultViewCell: UICollectionViewListCell {
     private struct Constants {
         static let coverWidthMax = 135.0
+        static let cornerRadius = 8.0
     }
 
     private lazy var authorLabel: UILabel = {
@@ -41,13 +42,24 @@ final class SearchResultViewCell: UICollectionViewListCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        self.layer.cornerRadius = 8
+        contentView.layer.cornerRadius = Constants.cornerRadius
+        contentView.layer.masksToBounds = true
 
-        var backgroundConfig = UIBackgroundConfiguration.listPlainCell()
-        backgroundConfig.backgroundColor = .ivory
-        self.backgroundConfiguration = backgroundConfig
-        self.layer.borderColor = UIColor.black.cgColor
-        self.layer.borderWidth = 2.0
+        // Set masks to bounds to false to avoid the shadow
+        // from being clipped to the corner radius
+        layer.cornerRadius = Constants.cornerRadius
+        layer.masksToBounds = false
+
+        backgroundConfiguration = UIBackgroundConfiguration.listPlainCell()
+        layer.borderColor = UIColor.black.cgColor
+        layer.borderWidth = 2.0
+
+        // Add drop shadow
+        layer.shadowRadius = Constants.cornerRadius
+        layer.shadowColor = UIColor.black.cgColor
+        layer.shadowOpacity = 0.7
+        layer.shadowOffset = CGSize(width: 0, height: 5)
+
 
         let disclosureImage = UIImage.chevronRightImage.withRenderingMode(.alwaysTemplate)
         let customAccessory = UICellAccessory.CustomViewConfiguration(

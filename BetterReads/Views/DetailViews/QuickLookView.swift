@@ -9,6 +9,7 @@ import UIKit
 
 /// Quick look container contains the "Quick look" of the book and shows the following:
 /// - Book Cover
+/// - Book Title
 /// - Author
 final class QuickLookView: UIView {
     private struct Constants {
@@ -23,20 +24,17 @@ final class QuickLookView: UIView {
     }
     // MARK: - Views
 
-    /// The container holds the book cover and also adds some basic design elements like a border
+    /// The container holds the book cover
     private lazy var bookCoverContainer: UIView = {
         let container = UIView()
         container.translatesAutoresizingMaskIntoConstraints = false
         container.addSubview(bookCover)
-        container.backgroundColor = .cream
-        container.layer.borderColor = UIColor.black.cgColor
-        container.layer.borderWidth = 2.0
 
         NSLayoutConstraint.activate([
-            container.leftAnchor.constraint(equalTo: bookCover.leftAnchor, constant: -10),
-            container.topAnchor.constraint(equalTo: bookCover.topAnchor, constant: -10),
-            container.rightAnchor.constraint(equalTo: bookCover.rightAnchor, constant: 10),
-            container.bottomAnchor.constraint(equalTo: bookCover.bottomAnchor, constant: 10)
+            container.leftAnchor.constraint(equalTo: bookCover.leftAnchor, constant: -Constants.bookInformationSpacing),
+            container.topAnchor.constraint(equalTo: bookCover.topAnchor, constant: -Constants.bookInformationSpacing),
+            container.rightAnchor.constraint(equalTo: bookCover.rightAnchor, constant: Constants.bookInformationSpacing),
+            container.bottomAnchor.constraint(equalTo: bookCover.bottomAnchor, constant: Constants.bookInformationSpacing)
         ])
         return container
     }()
@@ -47,10 +45,10 @@ final class QuickLookView: UIView {
         return cover
     }()
 
-    private lazy var textStack: UIStackView = {
+    private lazy var basicInfoStack: UIStackView = {
         let view = UIStackView()
         view.axis = .vertical
-        view.alignment = .center
+        view.alignment = .leading
         view.translatesAutoresizingMaskIntoConstraints = false
         view.spacing = Constants.bookInformationSpacing
         return view
@@ -62,6 +60,7 @@ final class QuickLookView: UIView {
         label.text = "Loading..."
         label.apply(type: .subHeader)
         label.textColor = .black
+        label.numberOfLines = 0
         return label
     }()
 
@@ -71,6 +70,7 @@ final class QuickLookView: UIView {
         label.text = "Loading..."
         label.apply(type: .headerBig)
         label.textColor = .black
+        label.numberOfLines = 0
         return label
     }()
 
@@ -83,19 +83,18 @@ final class QuickLookView: UIView {
 
     private func setupView() {
         addSubview(bookCoverContainer)
-        addSubview(textStack)
-        textStack.addArrangedSubview(titleLabel)
-        textStack.addArrangedSubview(authorLabel)
+        addSubview(basicInfoStack)
+        basicInfoStack.addArrangedSubview(titleLabel)
+        basicInfoStack.addArrangedSubview(authorLabel)
 
         NSLayoutConstraint.activate([
-            bookCoverContainer.centerXAnchor.constraint(equalTo: self.centerXAnchor, constant: Constants.spacing),
+            bookCoverContainer.leftAnchor.constraint(equalTo: self.leftAnchor, constant: Constants.spacing),
             bookCoverContainer.topAnchor.constraint(equalTo: self.topAnchor, constant: Constants.spacing),
+            bookCoverContainer.bottomAnchor.constraint(equalTo: self.bottomAnchor),
 
-            textStack.centerXAnchor.constraint(equalTo: bookCover.centerXAnchor),
-            textStack.leftAnchor.constraint(greaterThanOrEqualTo: self.leftAnchor, constant: Constants.spacing),
-            textStack.rightAnchor.constraint(lessThanOrEqualTo: self.rightAnchor, constant: -Constants.spacing),
-            textStack.topAnchor.constraint(equalTo: bookCover.bottomAnchor, constant: 16),
-            textStack.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -Constants.spacing)
+            basicInfoStack.centerYAnchor.constraint(equalTo: bookCover.centerYAnchor),
+            basicInfoStack.leftAnchor.constraint(equalTo: bookCoverContainer.rightAnchor, constant: Constants.spacing),
+            basicInfoStack.rightAnchor.constraint(lessThanOrEqualTo: self.rightAnchor, constant: -Constants.spacing),
         ])
     }
 
