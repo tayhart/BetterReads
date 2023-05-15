@@ -11,11 +11,29 @@ import UIKit
 /// - Book Cover
 /// - Book Title
 /// - Author
+/// - Quick-add menu to add to a list
 final class QuickLookView: UIView {
     private struct Constants {
         static let spacing = 12.0
         static let bookInformationSpacing = 10.0
         static let defaultImageWidth: CGFloat = 128.0
+    }
+
+    private enum ListType {
+        case toRead, didNotFinish, read, currentlyReading
+
+        var title: String {
+            switch self {
+                case .didNotFinish:
+                    return "Did not finish"
+                case .read:
+                    return "Read"
+                case .toRead:
+                    return "To read"
+                case .currentlyReading:
+                    return "Currently reading"
+            }
+        }
     }
 
     // MARK: - Variables
@@ -74,6 +92,26 @@ final class QuickLookView: UIView {
         return label
     }()
 
+    // Drop-down menu to quick-add the volume to a user's lists
+    private lazy var dropDownButton: UIButton = {
+        let button = UIButton(type: .roundedRect)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.tintColor = .primaryAccentColor
+        button.configuration = .filled()
+        button.showsMenuAsPrimaryAction = true
+        button.setTitle("Add to list", for: .normal)
+        button.contentHorizontalAlignment = .left
+        button.menu = UIMenu(
+            title: "Add book to list",
+            children: [
+                UIAction(title: ListType.toRead.title) {_ in button.setTitle(ListType.toRead.title, for: .normal) },
+                UIAction(title: ListType.read.title) {_ in button.setTitle(ListType.read.title, for: .normal)  },
+                UIAction(title: ListType.didNotFinish.title) {_ in button.setTitle(ListType.didNotFinish.title, for: .normal) },
+                UIAction(title: ListType.currentlyReading.title) {_ in button.setTitle(ListType.currentlyReading.title, for: .normal) }
+            ])
+        return button
+    }()
+
     // MARK: - Init + View Setup
     init() {
         super.init(frame: .zero)
@@ -84,6 +122,7 @@ final class QuickLookView: UIView {
     private func setupView() {
         addSubview(bookCoverContainer)
         addSubview(basicInfoStack)
+        addSubview(dropDownButton)
         basicInfoStack.addArrangedSubview(titleLabel)
         basicInfoStack.addArrangedSubview(authorLabel)
 
@@ -95,6 +134,10 @@ final class QuickLookView: UIView {
             basicInfoStack.centerYAnchor.constraint(equalTo: bookCover.centerYAnchor),
             basicInfoStack.leftAnchor.constraint(equalTo: bookCoverContainer.rightAnchor, constant: Constants.spacing),
             basicInfoStack.rightAnchor.constraint(lessThanOrEqualTo: self.rightAnchor, constant: -Constants.spacing),
+
+            dropDownButton.topAnchor.constraint(equalTo: basicInfoStack.bottomAnchor, constant: Constants.spacing),
+            dropDownButton.leftAnchor.constraint(equalTo: basicInfoStack.leftAnchor),
+            dropDownButton.rightAnchor.constraint(lessThanOrEqualTo: basicInfoStack.rightAnchor)
         ])
     }
 
