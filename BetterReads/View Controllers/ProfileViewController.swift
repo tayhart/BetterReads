@@ -98,9 +98,16 @@ final class ProfileViewController: UIViewController {
 
 
     // MARK: - View controller lifecycle
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupAuthenticationListener()
+        if let user = Auth.auth().currentUser {
+            updateWelcomeMessage(name: user.displayName)
+        }
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setupAuthenticationListener()
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -111,9 +118,9 @@ final class ProfileViewController: UIViewController {
     // MARK: Authentication
     private func setupAuthenticationListener() {
         authHandler = Auth.auth().addStateDidChangeListener { auth, user in
-            self.welcomeHeader.text = "Welcome, \(user?.email ?? "friend")"
             self.signInButton.isHidden = user != nil
             self.signOutButton.isHidden = user == nil
+            self.updateWelcomeMessage(name: user?.displayName)
         }
     }
 
@@ -123,5 +130,9 @@ final class ProfileViewController: UIViewController {
         } catch let signOutError as NSError {
             print("Error signing out: %@", signOutError)
         }
+    }
+
+    private func updateWelcomeMessage(name: String?) {
+        self.welcomeHeader.text = "Welcome, \(name ?? "friend")"
     }
 }

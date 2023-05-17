@@ -8,17 +8,29 @@
 import UIKit
 
 protocol AuthenticationDelegate: AnyObject {
-    func didSelectSignUpButton(email: String, password: String)
+    func didSelectSignUpButton(with userObject: FirebaseAuthManager.UserObject)
     func didSelectSignInButton(email: String, password: String)
 }
 
 final class SignInView: UIView {
     // MARK: - Views
+
+    private lazy var nameTextField: UITextField = {
+        let field = UITextField()
+        field.placeholder = "Name"
+        field.borderStyle = .roundedRect
+        field.translatesAutoresizingMaskIntoConstraints = false
+        field.autocorrectionType = .no
+        return field
+    }()
+
     // TODO: Validate info in email field
     private lazy var emailTextField: UITextField = {
         let field = UITextField()
         field.placeholder = "Email"
         field.borderStyle = .roundedRect
+        field.autocapitalizationType = .none
+        field.autocorrectionType = .no
         field.translatesAutoresizingMaskIntoConstraints = false
         return field
     }()
@@ -30,6 +42,8 @@ final class SignInView: UIView {
         field.borderStyle = .roundedRect
         field.isSecureTextEntry = true
         field.translatesAutoresizingMaskIntoConstraints = false
+        field.autocapitalizationType = .none
+        field.autocorrectionType = .no
         return field
     }()
 
@@ -62,6 +76,7 @@ final class SignInView: UIView {
     init() {
         super.init(frame: .zero)
         translatesAutoresizingMaskIntoConstraints = false
+        addSubview(nameTextField)
         addSubview(emailTextField)
         addSubview(passwordTextField)
         addSubview(signInButton)
@@ -71,9 +86,13 @@ final class SignInView: UIView {
             heightAnchor.constraint(equalToConstant: 350),
             widthAnchor.constraint(equalToConstant: 200),
 
-            emailTextField.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor, constant: 50),
-            emailTextField.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 50),
-            emailTextField.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -50),
+            nameTextField.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor, constant: 50),
+            nameTextField.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 50),
+            nameTextField.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -50),
+
+            emailTextField.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 20),
+            emailTextField.leadingAnchor.constraint(equalTo: nameTextField.leadingAnchor),
+            emailTextField.trailingAnchor.constraint(equalTo: nameTextField.trailingAnchor),
 
             passwordTextField.topAnchor.constraint(equalTo: emailTextField.bottomAnchor, constant: 20),
             passwordTextField.leadingAnchor.constraint(equalTo: emailTextField.leadingAnchor),
@@ -96,11 +115,15 @@ final class SignInView: UIView {
     // MARK: - Delegate Callers
     private func didSelectSignUpButton() {
         guard let email = emailTextField.text,
-              let password = passwordTextField.text else {
+              let password = passwordTextField.text,
+              let name = nameTextField.text else {
             return
         }
-
-        signInDelegate?.didSelectSignUpButton(email: email, password: password)
+        let user = FirebaseAuthManager.UserObject(
+            email: email,
+            password: password,
+            displayName: name)
+        signInDelegate?.didSelectSignUpButton(with: user)
     }
 
     private func didSelectSignInButton() {

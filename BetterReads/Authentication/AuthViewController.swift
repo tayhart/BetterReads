@@ -30,11 +30,10 @@ class AuthViewController: UIViewController {
 }
 
 extension AuthViewController: AuthenticationDelegate {
-    func didSelectSignUpButton(email: String, password: String) {
+    func didSelectSignUpButton(with userObject: FirebaseAuthManager.UserObject) {
         assert(Auth.auth().currentUser == nil)
-        Auth.auth().createUser(withEmail: email, password: password) { result, error in
-            if error == nil {
-                // Success, move on with our lives
+        FirebaseAuthManager().createUser(with: userObject) { success in
+            if success {
                 self.navigationController?.popViewController(animated: true)
             }
         }
