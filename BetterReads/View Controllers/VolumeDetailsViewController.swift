@@ -24,7 +24,7 @@ final class VolumeDetailsViewController: UIViewController {
     }()
 
     // MARK: UI Views
-    private var quickLook: QuickLookView = QuickLookView()
+    private var quickLook: QuickLookView = QuickLookView(delegate: nil)
 
     private lazy var descriptionHeader: UILabel = {
         let header = UILabel()

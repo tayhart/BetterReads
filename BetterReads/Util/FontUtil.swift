@@ -40,7 +40,6 @@ extension UILabel {
             }
         }()
         font = UIFont(name: fontName, size: size)
-
     }
 }
 

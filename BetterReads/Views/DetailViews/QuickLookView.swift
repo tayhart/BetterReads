@@ -7,6 +7,27 @@
 
 import UIKit
 
+protocol AddToListProtocol: AnyObject {
+    func didAddToList(_ listType: ListType)
+}
+
+enum ListType {
+    case toRead, didNotFinish, read, currentlyReading
+
+    var title: String {
+        switch self {
+            case .didNotFinish:
+                return "Did not finish"
+            case .read:
+                return "Read"
+            case .toRead:
+                return "To read"
+            case .currentlyReading:
+                return "Currently reading"
+        }
+    }
+}
+
 /// Quick look container contains the "Quick look" of the book and shows the following:
 /// - Book Cover
 /// - Book Title
@@ -19,27 +40,14 @@ final class QuickLookView: UIView {
         static let defaultImageWidth: CGFloat = 128.0
     }
 
-    private enum ListType {
-        case toRead, didNotFinish, read, currentlyReading
-
-        var title: String {
-            switch self {
-                case .didNotFinish:
-                    return "Did not finish"
-                case .read:
-                    return "Read"
-                case .toRead:
-                    return "To read"
-                case .currentlyReading:
-                    return "Currently reading"
-            }
-        }
-    }
-
     // MARK: - Variables
     var bookCenterYAnchor: NSLayoutYAxisAnchor {
         return bookCover.centerYAnchor
     }
+
+    // MARK: - Interaction Delegate
+    var listInteractionDelegate: AddToListProtocol?
+
     // MARK: - Views
 
     /// The container holds the book cover
@@ -96,7 +104,7 @@ final class QuickLookView: UIView {
     private lazy var dropDownButton: UIButton = {
         let button = UIButton(type: .roundedRect)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.tintColor = .primaryAccentColor
+        button.tintColor = .ctaColor
         button.configuration = .filled()
         button.showsMenuAsPrimaryAction = true
         button.setTitle("Add to list", for: .normal)
@@ -113,10 +121,11 @@ final class QuickLookView: UIView {
     }()
 
     // MARK: - Init + View Setup
-    init() {
+    init(delegate: AddToListProtocol?) {
         super.init(frame: .zero)
         self.translatesAutoresizingMaskIntoConstraints = false
         setupView()
+        self.listInteractionDelegate = delegate
     }
 
     private func setupView() {

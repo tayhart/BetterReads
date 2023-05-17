@@ -10,7 +10,7 @@ import UIKit
 extension UIColor {
     static let primaryBackgroundColor = UIColor.systemBackground
     static let primaryAccentColor = richLavendar
-    static let secondaryAccentColor = pistachio
+    static let ctaColor = pistachio
 
     static let ivory = UIColor(r: 255.0, g: 255.0, b: 240.0)
     static let cream = UIColor(r: 255, g: 253, b: 208)

@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:/Users/taylor/Documents/mibrary/BetterReads.xcodeproj">
+      location = "self:">
    </FileRef>
 </Workspace>
