@@ -24,7 +24,7 @@ final class VolumeDetailsViewController: UIViewController {
     }()
 
     // MARK: UI Views
-    private var quickLook: QuickLookView = QuickLookView(delegate: nil)
+    private var quickLook: QuickLookView
 
     private lazy var descriptionHeader: UILabel = {
         let header = UILabel()
@@ -63,8 +63,15 @@ final class VolumeDetailsViewController: UIViewController {
 
     init(viewModel: DetailsViewModel) {
         self.viewModel = viewModel
+        quickLook = QuickLookView(dataModel: viewModel, delegate: nil)
         super.init(nibName: nil, bundle: nil)
         setupView()
+        coverSink = viewModel.coverImageSubject.sink { [weak self] in
+            guard let cover = $0 else {
+                return
+            }
+            self?.quickLook.setBookCover(cover: cover)
+        }
     }
 
     private func setupView() {
@@ -90,17 +97,9 @@ final class VolumeDetailsViewController: UIViewController {
     }
 
     // MARK: View Controller Lifecycle
-    override func viewDidLoad() {
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         view.backgroundColor = .systemBackground
-        quickLook.setTitleAndAuthors(title: viewModel.title, authors: viewModel.authors)
-
-        // Subscribe to the cover image being downloaded
-        coverSink = viewModel.coverImageSubject.sink { [weak self] in
-            guard let cover = $0 else {
-                return
-            }
-            self?.quickLook.setBookCover(cover: cover)
-        }
         viewModel.downloadCoverImage()
         view.layoutIfNeeded()
     }

@@ -32,6 +32,9 @@ enum ListType {
 /// - Book Cover
 /// - Book Title
 /// - Author
+/// - Page count
+/// - Published Date
+/// - Average Rating
 /// - Quick-add menu to add to a list
 final class QuickLookView: UIView {
     private struct Constants {
@@ -100,6 +103,36 @@ final class QuickLookView: UIView {
         return label
     }()
 
+    private lazy var pageCountLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "Loading..."
+        label.apply(type: .body)
+        label.textColor = .black
+        label.numberOfLines = 0
+        return label
+    }()
+
+    private lazy var publishDateLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "Loading..."
+        label.apply(type: .body)
+        label.textColor = .black
+        label.numberOfLines = 0
+        return label
+    }()
+
+    private lazy var averageRatingLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "Loading..."
+        label.apply(type: .body)
+        label.textColor = .black
+        label.numberOfLines = 0
+        return label
+    }()
+
     // Drop-down menu to quick-add the volume to a user's lists
     private lazy var dropDownButton: UIButton = {
         let button = UIButton(type: .roundedRect)
@@ -121,11 +154,17 @@ final class QuickLookView: UIView {
     }()
 
     // MARK: - Init + View Setup
-    init(delegate: AddToListProtocol?) {
+    init(dataModel: DetailsViewModel, delegate: AddToListProtocol?) {
         super.init(frame: .zero)
         self.translatesAutoresizingMaskIntoConstraints = false
-        setupView()
         self.listInteractionDelegate = delegate
+        titleLabel.text = dataModel.title
+        authorLabel.text = dataModel.authors
+        pageCountLabel.text = dataModel.numberOfPagesDisplayString
+        publishDateLabel.text = dataModel.publishDate
+        averageRatingLabel.text = dataModel.averageRatingDisplayString
+
+        setupView()
     }
 
     private func setupView() {
@@ -134,6 +173,9 @@ final class QuickLookView: UIView {
         addSubview(dropDownButton)
         basicInfoStack.addArrangedSubview(titleLabel)
         basicInfoStack.addArrangedSubview(authorLabel)
+        basicInfoStack.addArrangedSubview(publishDateLabel)
+        basicInfoStack.addArrangedSubview(pageCountLabel)
+        basicInfoStack.addArrangedSubview(averageRatingLabel)
 
         NSLayoutConstraint.activate([
             bookCoverContainer.leftAnchor.constraint(equalTo: self.leftAnchor, constant: Constants.spacing),
@@ -165,11 +207,6 @@ final class QuickLookView: UIView {
         group.notify(queue: .main) { [weak self] in
             self?.layoutIfNeeded()
         }
-    }
-
-    func setTitleAndAuthors(title: String, authors: String) {
-        titleLabel.text = title
-        authorLabel.text = authors
     }
     
     required init?(coder: NSCoder) {

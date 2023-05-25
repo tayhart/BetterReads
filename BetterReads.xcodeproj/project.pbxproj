@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		34491A262A1EDBC1003113E1 /* RatingUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34491A252A1EDBC1003113E1 /* RatingUtil.swift */; };
 		345785D82873EA72008EB7CC /* VolumeDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345785D72873EA72008EB7CC /* VolumeDetailsViewController.swift */; };
 		345785DA2873EA8A008EB7CC /* FeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345785D92873EA8A008EB7CC /* FeedViewController.swift */; };
 		345785DC2873EA95008EB7CC /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345785DB2873EA95008EB7CC /* ProfileViewController.swift */; };
@@ -72,6 +73,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		34491A252A1EDBC1003113E1 /* RatingUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingUtil.swift; sourceTree = "<group>"; };
 		345785D72873EA72008EB7CC /* VolumeDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolumeDetailsViewController.swift; sourceTree = "<group>"; };
 		345785D92873EA8A008EB7CC /* FeedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedViewController.swift; sourceTree = "<group>"; };
 		345785DB2873EA95008EB7CC /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
@@ -175,6 +177,7 @@
 				346FDE3F29A321D40060B688 /* FontUtil.swift */,
 				34B8D70C29A334BB00322178 /* ColorUtil.swift */,
 				34B8D70E29A5D35200322178 /* IconUtil.swift */,
+				34491A252A1EDBC1003113E1 /* RatingUtil.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -410,6 +413,7 @@
 				345785D82873EA72008EB7CC /* VolumeDetailsViewController.swift in Sources */,
 				3494E47B2A12931C00C45843 /* FirebaseAuthManager.swift in Sources */,
 				34BF38CA27E59A0700474AE3 /* SceneDelegate.swift in Sources */,
+				34491A262A1EDBC1003113E1 /* RatingUtil.swift in Sources */,
 				34B8D70D29A334BB00322178 /* ColorUtil.swift in Sources */,
 				34FF446727ED81D900DE886B /* SearchResultsCollectionViewController.swift in Sources */,
 				3494E47F2A12944100C45843 /* AuthViewController.swift in Sources */,

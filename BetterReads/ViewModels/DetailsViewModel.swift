@@ -21,6 +21,37 @@ final class DetailsViewModel {
         return volume.volumeInfo.pageCount
     }
 
+    var numberOfPagesDisplayString: String {
+        guard let pageCount = numberOfPages else {
+            return "Unknown number of pages"
+        }
+        return "\(pageCount) pages"
+    }
+
+    var publishDate: String {
+        guard let date = volume.volumeInfo.publishedDate else {
+            return "Unknown published date"
+        }
+
+        return "Published in \(date)"
+    }
+
+    var averageRating: Double? {
+        return volume.volumeInfo.averageRating
+    }
+
+    var averageRatingDisplayString: String {
+        guard let rating = averageRating else {
+            return "Unrated"
+        }
+
+        return "\(rating) out of 5"
+    }
+
+    var numberOfRatings: Int? {
+        return volume.volumeInfo.ratingsCount
+    }
+
     var title: String {
         return volume.volumeInfo.title ?? "Unknown"
     }
