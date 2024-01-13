@@ -25,7 +25,9 @@ final class SearchResultViewModel {
                   let author = volume.volumeInfo.authors?[0] else {
                 return nil
             }
-            return Book(title: title, author: author, cover: volume.volumeInfo.imageLinks?.thumbnail)
+
+            let coverLink = volume.volumeInfo.imageLinks?.thumbnail?.replacingOccurrences(of: "&edge=curl", with: "")
+            return Book(title: title, author: author, cover: coverLink)
         })
     }
 

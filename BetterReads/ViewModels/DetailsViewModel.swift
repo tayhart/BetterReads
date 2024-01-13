@@ -77,7 +77,7 @@ final class DetailsViewModel {
                 volume.volumeInfo.imageLinks?.medium ??
                 volume.volumeInfo.imageLinks?.small ??
                 volume.volumeInfo.imageLinks?.thumbnail,
-              let url = URL(string: urlString) else {
+              let url = URL(string: urlString.replacingOccurrences(of: "&edge=curl", with: "")) else {
             return
         }
 

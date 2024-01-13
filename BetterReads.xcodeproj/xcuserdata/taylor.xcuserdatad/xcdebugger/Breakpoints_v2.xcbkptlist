@@ -88,6 +88,21 @@
                   endingLineNumber = "26"
                   offsetFromSymbolStart = "56">
                </Location>
+               <Location
+                  uuid = "A3F05C26-7C53-4170-873D-F5B535561E7F - b0d733676262e0b9"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Optional&lt;__C.FIRAuthDataResult&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in BetterReads.FirebaseAuthManager.createUser(with: BetterReads.FirebaseAuthManager.UserObject, completionBlock: (Swift.Bool) -&gt; ()) -&gt; ()"
+                  moduleName = "BetterReads"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/taylor/Documents/BetterReads/BetterReads/Authentication/FirebaseAuthManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "25"
+                  endingLineNumber = "25"
+                  offsetFromSymbolStart = "536">
+               </Location>
             </Locations>
          </BreakpointContent>
       </BreakpointProxy>
@@ -120,6 +135,38 @@
             startingLineNumber = "121"
             endingLineNumber = "121"
             landmarkName = "setupAuthenticationListener()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "192182FC-1979-4E2E-AC36-2C166DCB9202"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BetterReads/ViewModels/DetailsViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "96"
+            endingLineNumber = "96"
+            landmarkName = "downloadCoverImage()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "7A88C245-DD9B-4B7B-9C9B-9046EBB90E8D"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BetterReads/View Controllers/VolumeDetailsViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "73"
+            endingLineNumber = "73"
+            landmarkName = "init(viewModel:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
