@@ -6,102 +6,39 @@
 //
 
 import UIKit
-import Combine
+import SwiftUI
 
+/// UIKit wrapper that hosts the SwiftUI VolumeDetailsView
 final class VolumeDetailsViewController: UIViewController {
-    private struct Constants {
-        static let spacing = 14.0
-        static let descriptionMargin = 12.0
-        static let margins = 10.0
+
+    private let volume: GoogleBooksResponse.Volume
+
+    init(volume: GoogleBooksResponse.Volume) {
+        self.volume = volume
+        super.init(nibName: nil, bundle: nil)
     }
 
-    // MARK: - Design Motifs
-    private lazy var horizontalBar: UIView = {
-        let designMotif = UIView()
-        designMotif.translatesAutoresizingMaskIntoConstraints = false
-        designMotif.backgroundColor = .black
-        return designMotif
-    }()
-
-    // MARK: UI Views
-    private var quickLook: QuickLookView
-
-    private lazy var descriptionHeader: UILabel = {
-        let header = UILabel()
-        header.translatesAutoresizingMaskIntoConstraints = false
-        header.text = "Description"
-        header.apply(type: .headerSmall)
-        return header
-    }()
-
-    private lazy var detailedDescription: UITextView = {
-        let description = UITextView()
-        description.translatesAutoresizingMaskIntoConstraints = false
-        description.text = viewModel.description
-        description.textColor = .black
-        description.layer.borderColor = UIColor.black.cgColor
-        description.layer.borderWidth = 1.0
-        description.layer.cornerRadius = 8.0
-        description.contentInset = UIEdgeInsets(
-            top: Constants.margins,
-            left: Constants.margins,
-            bottom: Constants.margins,
-            right: Constants.margins)
-        description.apply(type: .body)
-        description.isEditable = false
-        return description
-    }()
-
-    // MARK: Variables
-    private var coverSink: AnyCancellable?
-    private var viewModel: DetailsViewModel
-
-    // MARK: Init + Setup
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    init(viewModel: DetailsViewModel) {
-        self.viewModel = viewModel
-        quickLook = QuickLookView(dataModel: viewModel, delegate: nil)
-        super.init(nibName: nil, bundle: nil)
-        setupView()
-        coverSink = viewModel.coverImageSubject.sink { [weak self] in
-            guard let cover = $0 else {
-                return
-            }
-            self?.quickLook.setBookCover(cover: cover)
-        }
-    }
+    override func viewDidLoad() {
+        super.viewDidLoad()
 
-    private func setupView() {
-        view.addSubview(quickLook)
-        view.addSubview(descriptionHeader)
-        view.addSubview(detailedDescription)
+        let detailsView = VolumeDetailsView(volume: volume)
+        let hostingController = UIHostingController(rootView: detailsView)
 
+        addChild(hostingController)
+        view.addSubview(hostingController.view)
+
+        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            quickLook.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            quickLook.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
-            quickLook.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
-            quickLook.bottomAnchor.constraint(lessThanOrEqualTo: view.safeAreaLayoutGuide.bottomAnchor),
-
-            descriptionHeader.topAnchor.constraint(equalTo: quickLook.bottomAnchor, constant: Constants.descriptionMargin),
-            descriptionHeader.leftAnchor.constraint(equalTo: quickLook.leftAnchor, constant: Constants.descriptionMargin + 5),
-            descriptionHeader.rightAnchor.constraint(equalTo: quickLook.rightAnchor),
-
-            detailedDescription.topAnchor.constraint(equalTo: descriptionHeader.bottomAnchor, constant: Constants.margins),
-            detailedDescription.leftAnchor.constraint(equalTo: view.leftAnchor, constant: Constants.descriptionMargin),
-            detailedDescription.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -Constants.descriptionMargin),
-            detailedDescription.heightAnchor.constraint(equalToConstant: 150)
+            hostingController.view.topAnchor.constraint(equalTo: view.topAnchor),
+            hostingController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            hostingController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            hostingController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
-    }
 
-    // MARK: View Controller Lifecycle
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        view.backgroundColor = .systemBackground
-        viewModel.downloadCoverImage()
-        view.layoutIfNeeded()
+        hostingController.didMove(toParent: self)
     }
-
 }
