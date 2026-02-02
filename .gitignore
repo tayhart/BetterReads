@@ -11,3 +11,4 @@ BetterReads.xcodeproj/project.xcworkspace/xcuserdata/*
 
 #Config Files
 BetterReads/APIKeys.xcconfig
+GoogleService-Info.plist

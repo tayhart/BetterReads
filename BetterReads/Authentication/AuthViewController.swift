@@ -6,45 +6,32 @@
 //
 
 import UIKit
-import Firebase
-import FirebaseAuth
+import SwiftUI
 
-
+/// UIKit wrapper that hosts the SwiftUI AuthenticationView
+/// This allows the SwiftUI view to work within the existing UIKit navigation stack
 class AuthViewController: UIViewController {
 
-    let signInView = SignInView()
-
     override func viewDidLoad() {
-        view.addSubview(signInView)
-        signInView.signInDelegate = self
-        view.backgroundColor = .primaryBackgroundColor
+        super.viewDidLoad()
 
+        var authView = AuthenticationView()
+        authView.onAuthenticationSuccess = { [weak self] in
+            self?.navigationController?.popViewController(animated: true)
+        }
+
+        let hostingController = UIHostingController(rootView: authView)
+        addChild(hostingController)
+        view.addSubview(hostingController.view)
+
+        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            signInView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            signInView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
-            signInView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
-            signInView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            hostingController.view.topAnchor.constraint(equalTo: view.topAnchor),
+            hostingController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            hostingController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            hostingController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
-        
-    }
-}
 
-extension AuthViewController: AuthenticationDelegate {
-    func didSelectSignUpButton(with userObject: FirebaseAuthManager.UserObject) {
-        assert(Auth.auth().currentUser == nil)
-        FirebaseAuthManager().createUser(with: userObject) { success in
-            if success {
-                self.navigationController?.popViewController(animated: true)
-            }
-        }
-    }
-
-    func didSelectSignInButton(email: String, password: String) {
-        assert(Auth.auth().currentUser == nil)
-        Auth.auth().signIn(withEmail: email, password: password) { result, error in
-            if error == nil {
-                self.navigationController?.popViewController(animated: true)
-            }
-        }
+        hostingController.didMove(toParent: self)
     }
 }
