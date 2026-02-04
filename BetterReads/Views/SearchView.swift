@@ -10,11 +10,16 @@ import SwiftUI
 // MARK: - SearchView
 
 struct SearchView: View {
-    @StateObject private var viewModel = SearchViewModel()
+    @StateObject private var viewModel: SearchViewModel
+
     @State private var searchText: String = ""
 
     var onProfileTapped: (() -> Void)?
-    var onVolumeTapped: ((GoogleBooksResponse.Volume) -> Void)?
+    var onBookDetailsTapped: ((BookDetails) -> Void)?
+
+    init(provider: BookSearchProvider = GoogleBooksProvider()) {
+        _viewModel = StateObject(wrappedValue: SearchViewModel(provider: provider))
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -23,7 +28,7 @@ struct SearchView: View {
         }
         .background(Color(UIColor.systemBackground))
         .toolbar {
-            ToolbarItemGroup(placement: .bottomBar) {
+            ToolbarItemGroup(placement: .automatic) {
                 bottomToolbar
             }
         }
@@ -64,7 +69,19 @@ struct SearchView: View {
             Spacer()
             ProgressView()
             Spacer()
-        } else if $viewModel.books.isEmpty {
+        } else if let error = viewModel.error {
+            Spacer()
+            VStack(spacing: 8) {
+                Image(systemName: "exclamationmark.triangle")
+                    .font(.largeTitle)
+                    .foregroundStyle(.secondary)
+                Text(error.localizedDescription)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+            }
+            .padding()
+            Spacer()
+        } else if viewModel.searchResults.isEmpty {
             Spacer()
             Text("Search for books to get started")
                 .foregroundStyle(.secondary)
@@ -77,12 +94,10 @@ struct SearchView: View {
     private var resultsList: some View {
         ScrollView {
             LazyVStack(spacing: 15) {
-                ForEach(Array(viewModel.books.enumerated()), id: \.element.id) { index, book in
-                    SearchResultRow(book: book)
+                ForEach(viewModel.searchResults) { result in
+                    SearchResultRow(book: result.book)
                         .onTapGesture {
-                            if let volume = viewModel.getVolume(at: index) {
-                                onVolumeTapped?(volume)
-                            }
+                            onBookDetailsTapped?(result.details)
                         }
                 }
             }
@@ -122,38 +137,42 @@ struct SearchView: View {
 
 @MainActor
 class SearchViewModel: ObservableObject {
-    @Published var books: [Book] = []
+    @Published var searchResults: [BookSearchResult] = []
     @Published var isLoading: Bool = false
+    @Published var error: BookSearchError?
 
-    private let dataController = BooksDataController()
-    private var response: GoogleBooksResponse?
+    private let provider: BookSearchProvider
+
+    init(provider: BookSearchProvider = GoogleBooksProvider()) {
+        self.provider = provider
+    }
 
     func search(query: String) {
         isLoading = true
-        books = []
+        searchResults = []
+        error = nil
 
-        dataController.request(query) { [weak self] result in
-            DispatchQueue.main.async {
-                self?.response = result
-                self?.books = result.items.compactMap { volume in
-                    guard let title = volume.volumeInfo.title,
-                          let author = volume.volumeInfo.authors?.first else {
-                        return nil
-                    }
-                    let coverLink = volume.volumeInfo.imageLinks?.thumbnail?.replacingOccurrences(of: "&edge=curl", with: "")
-                    return Book(id: volume.id, title: title, author: author, cover: coverLink)
-                }
-                self?.isLoading = false
+        Task {
+            do {
+                let results = try await provider.search(query: query)
+                self.searchResults = results
+                self.isLoading = false
+            } catch let searchError as BookSearchError {
+                self.error = searchError
+                self.isLoading = false
+            } catch {
+                self.error = .networkError(error)
+                self.isLoading = false
             }
         }
     }
 
-    func getVolume(at index: Int) -> GoogleBooksResponse.Volume? {
-        guard let response = response,
-              response.items.indices.contains(index) else {
+    /// Returns the BookDetails at the given index, if available.
+    func getBookDetails(at index: Int) -> BookDetails? {
+        guard searchResults.indices.contains(index) else {
             return nil
         }
-        return response.items[index]
+        return searchResults[index].details
     }
 }
 

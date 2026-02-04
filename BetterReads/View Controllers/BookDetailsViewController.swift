@@ -1,20 +1,20 @@
 //
-//  VolumeDetailsViewController.swift
+//  BookDetailsViewController.swift
 //  BetterReads
 //
-//  Created by Taylor Hartman on 7/4/22.
+//  UIKit wrapper that hosts the SwiftUI BookDetailsView.
 //
 
 import UIKit
 import SwiftUI
 
-/// UIKit wrapper that hosts the SwiftUI VolumeDetailsView
-final class VolumeDetailsViewController: UIViewController {
+/// UIKit wrapper that hosts the SwiftUI BookDetailsView
+final class BookDetailsViewController: UIViewController {
 
-    private let volume: GoogleBooksResponse.Volume
+    private let bookDetails: BookDetails
 
-    init(volume: GoogleBooksResponse.Volume) {
-        self.volume = volume
+    init(bookDetails: BookDetails) {
+        self.bookDetails = bookDetails
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -25,7 +25,7 @@ final class VolumeDetailsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let detailsView = VolumeDetailsView(volume: volume)
+        let detailsView = BookDetailsView(bookDetails: bookDetails)
         let hostingController = UIHostingController(rootView: detailsView)
 
         addChild(hostingController)

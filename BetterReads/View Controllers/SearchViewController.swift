@@ -18,8 +18,8 @@ class SearchViewController: UIViewController {
         searchView.onProfileTapped = { [weak self] in
             self?.navigationController?.pushViewController(ProfileViewController(), animated: true)
         }
-        searchView.onVolumeTapped = { [weak self] volume in
-            let detailsVC = VolumeDetailsViewController(volume: volume)
+        searchView.onBookDetailsTapped = { [weak self] bookDetails in
+            let detailsVC = BookDetailsViewController(bookDetails: bookDetails)
             self?.navigationController?.pushViewController(detailsVC, animated: true)
         }
 
