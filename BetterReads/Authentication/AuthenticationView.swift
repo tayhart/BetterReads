@@ -2,11 +2,10 @@
 //  AuthenticationView.swift
 //  BetterReads
 //
-//  Sign in and registration views.
+//  Sign in and registration views using Supabase Auth.
 //
 
 import SwiftUI
-import FirebaseAuth
 
 struct AuthenticationView: View {
     @Environment(Router.self) private var router
@@ -16,9 +15,15 @@ struct AuthenticationView: View {
     @State private var errorMessage: String?
     @State private var showingRegistration: Bool = false
 
+    private let authService = AuthService.shared
+
     var body: some View {
         VStack(spacing: 20) {
             Spacer()
+
+            Text("Welcome to BetterReads")
+                .font(.title)
+                .fontWeight(.bold)
 
             TextField("Email", text: $email)
                 .textFieldStyle(.roundedBorder)
@@ -35,13 +40,14 @@ struct AuthenticationView: View {
                 Text(errorMessage)
                     .foregroundStyle(.red)
                     .font(.caption)
+                    .multilineTextAlignment(.center)
             }
 
             Button("Sign In") {
                 signIn()
             }
-            .buttonStyle(.bordered)
-            .foregroundStyle(Color.cta)
+            .buttonStyle(.borderedProminent)
+            .tint(Color.cta)
             .disabled(isLoading || email.isEmpty || password.isEmpty)
 
             Button("Create Account") {
@@ -55,7 +61,7 @@ struct AuthenticationView: View {
 
             Spacer()
         }
-        .padding(.horizontal, 50)
+        .padding(.horizontal, 40)
         .background(Color.primaryBackground)
         .navigationTitle("Sign In")
         .navigationBarTitleDisplayMode(.inline)
@@ -73,13 +79,14 @@ struct AuthenticationView: View {
         isLoading = true
         errorMessage = nil
 
-        Auth.auth().signIn(withEmail: email, password: password) { result, error in
-            isLoading = false
-            if let error {
-                errorMessage = error.localizedDescription
-            } else {
+        Task {
+            do {
+                try await authService.signIn(email: email, password: password)
                 router.pop()
+            } catch {
+                errorMessage = error.localizedDescription
             }
+            isLoading = false
         }
     }
 }
@@ -89,10 +96,25 @@ struct RegistrationView: View {
     @State private var name: String = ""
     @State private var email: String = ""
     @State private var password: String = ""
+    @State private var confirmPassword: String = ""
     @State private var isLoading: Bool = false
     @State private var errorMessage: String?
 
+    private let authService = AuthService.shared
+
     var onRegistrationSuccess: (() -> Void)?
+
+    private var passwordsMatch: Bool {
+        password == confirmPassword
+    }
+
+    private var canSubmit: Bool {
+        !name.isEmpty &&
+        !email.isEmpty &&
+        !password.isEmpty &&
+        passwordsMatch &&
+        password.count >= 6
+    }
 
     var body: some View {
         NavigationStack {
@@ -115,18 +137,35 @@ struct RegistrationView: View {
                     .textFieldStyle(.roundedBorder)
                     .textContentType(.newPassword)
 
+                SecureField("Confirm Password", text: $confirmPassword)
+                    .textFieldStyle(.roundedBorder)
+                    .textContentType(.newPassword)
+
+                if !password.isEmpty && password.count < 6 {
+                    Text("Password must be at least 6 characters")
+                        .foregroundStyle(.orange)
+                        .font(.caption)
+                }
+
+                if !confirmPassword.isEmpty && !passwordsMatch {
+                    Text("Passwords don't match")
+                        .foregroundStyle(.red)
+                        .font(.caption)
+                }
+
                 if let errorMessage {
                     Text(errorMessage)
                         .foregroundStyle(.red)
                         .font(.caption)
+                        .multilineTextAlignment(.center)
                 }
 
                 Button("Create Account") {
                     createAccount()
                 }
-                .buttonStyle(.bordered)
-                .foregroundStyle(Color.cta)
-                .disabled(isLoading || name.isEmpty || email.isEmpty || password.isEmpty)
+                .buttonStyle(.borderedProminent)
+                .tint(Color.cta)
+                .disabled(isLoading || !canSubmit)
 
                 if isLoading {
                     ProgressView()
@@ -134,7 +173,7 @@ struct RegistrationView: View {
 
                 Spacer()
             }
-            .padding(.horizontal, 50)
+            .padding(.horizontal, 40)
             .navigationTitle("Create Account")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -148,30 +187,30 @@ struct RegistrationView: View {
     }
 
     private func createAccount() {
-        guard !name.isEmpty, !email.isEmpty, !password.isEmpty else { return }
+        guard canSubmit else { return }
 
         isLoading = true
         errorMessage = nil
 
-        let userObject = FirebaseAuthManager.UserObject(
-            email: email,
-            password: password,
-            displayName: name
-        )
-
-        FirebaseAuthManager().createUser(with: userObject) { success in
-            isLoading = false
-            if success {
+        Task {
+            do {
+                try await authService.signUp(
+                    email: email,
+                    password: password,
+                    displayName: name
+                )
                 onRegistrationSuccess?()
-            } else {
-                errorMessage = "Failed to create account. Please try again."
+            } catch {
+                errorMessage = error.localizedDescription
             }
+            isLoading = false
         }
     }
 }
 
 #Preview("Sign In") {
     AuthenticationView()
+        .environment(Router())
 }
 
 #Preview("Registration") {

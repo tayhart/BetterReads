@@ -30,6 +30,10 @@
 		<string></string>
 	</dict>
 	<key>books_API</key>
-	<string>$(books_API)</string>
+	<string>$(GOOGLE_BOOKS_API)</string>
+	<key>Supabase_url</key>
+	<string>$(SUPABASE_URL)</string>
+	<key>Supabase_key</key>
+	<string>$(SUPABASE_KEY)</string>
 </dict>
 </plist>
