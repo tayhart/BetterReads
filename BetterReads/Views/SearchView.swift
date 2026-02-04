@@ -2,7 +2,7 @@
 //  SearchView.swift
 //  BetterReads
 //
-//  SwiftUI replacement for SearchViewController + SearchResultsCollectionViewController
+//  SwiftUI search view with native navigation.
 //
 
 import SwiftUI
@@ -10,12 +10,10 @@ import SwiftUI
 // MARK: - SearchView
 
 struct SearchView: View {
+    @Environment(Router.self) private var router
     @StateObject private var viewModel: SearchViewModel
 
     @State private var searchText: String = ""
-
-    var onProfileTapped: (() -> Void)?
-    var onBookDetailsTapped: ((BookDetails) -> Void)?
 
     init(provider: BookSearchProvider = GoogleBooksProvider()) {
         _viewModel = StateObject(wrappedValue: SearchViewModel(provider: provider))
@@ -27,8 +25,9 @@ struct SearchView: View {
             resultsContent
         }
         .background(Color(UIColor.systemBackground))
+        .navigationBarHidden(true)
         .toolbar {
-            ToolbarItemGroup(placement: .automatic) {
+            ToolbarItemGroup(placement: .bottomBar) {
                 bottomToolbar
             }
         }
@@ -97,7 +96,7 @@ struct SearchView: View {
                 ForEach(viewModel.searchResults) { result in
                     SearchResultRow(book: result.book)
                         .onTapGesture {
-                            onBookDetailsTapped?(result.details)
+                            router.navigate(to: .bookDetails(result.details))
                         }
                 }
             }
@@ -119,7 +118,7 @@ struct SearchView: View {
         .tint(.mint)
         Spacer()
         Button {
-            onProfileTapped?()
+            router.navigate(to: .profile)
         } label: {
             Image(systemName: "person")
         }
@@ -167,7 +166,6 @@ class SearchViewModel: ObservableObject {
         }
     }
 
-    /// Returns the BookDetails at the given index, if available.
     func getBookDetails(at index: Int) -> BookDetails? {
         guard searchResults.indices.contains(index) else {
             return nil
@@ -177,7 +175,5 @@ class SearchViewModel: ObservableObject {
 }
 
 #Preview {
-    NavigationStack {
-        SearchView()
-    }
+    ContentView()
 }

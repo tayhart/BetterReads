@@ -14,15 +14,13 @@ struct BookDetailsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
-                // Quick Look Section
                 quickLookSection
-
-                // Description Section
                 descriptionSection
             }
             .padding(.horizontal, 12)
         }
         .background(Color(UIColor.systemBackground))
+        .navigationTitle(bookDetails.title)
         .navigationBarTitleDisplayMode(.inline)
     }
 
@@ -30,7 +28,6 @@ struct BookDetailsView: View {
 
     private var quickLookSection: some View {
         HStack(alignment: .center, spacing: 12) {
-            // Book Cover
             AsyncImage(url: coverURL) { phase in
                 switch phase {
                 case .empty:
@@ -53,7 +50,6 @@ struct BookDetailsView: View {
             }
             .padding(10)
 
-            // Book Info Stack
             VStack(alignment: .leading, spacing: 10) {
                 Text(title)
                     .font(.title2)
@@ -72,7 +68,6 @@ struct BookDetailsView: View {
                 Text(rating)
                     .font(.callout)
 
-                // Add to List Menu
                 Menu {
                     ForEach(ListType.allCases, id: \.self) { listType in
                         Button(listType.title) {

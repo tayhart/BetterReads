@@ -2,17 +2,16 @@
 //  ProfileView.swift
 //  BetterReads
 //
-//  SwiftUI replacement for ProfileViewController
+//  User profile view with authentication state.
 //
 
 import SwiftUI
 import FirebaseAuth
 
 struct ProfileView: View {
+    @Environment(Router.self) private var router
     @State private var currentUser: User?
     @State private var authListenerHandle: AuthStateDidChangeListenerHandle?
-
-    var onSignInTapped: (() -> Void)?
 
     var body: some View {
         VStack {
@@ -29,7 +28,7 @@ struct ProfileView: View {
 
             if currentUser == nil {
                 Button("Sign in or Sign up to see more") {
-                    onSignInTapped?()
+                    router.navigate(to: .authentication)
                 }
                 .buttonStyle(.borderedProminent)
                 .tint(Color.cta)
@@ -47,6 +46,8 @@ struct ProfileView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.primaryBackground)
+        .navigationTitle("Profile")
+        .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             setupAuthListener()
         }
@@ -77,6 +78,9 @@ struct ProfileView: View {
     }
 }
 
-#Preview("Signed Out") {
-    ProfileView()
+#Preview {
+    NavigationStack {
+        ProfileView()
+    }
+    .environment(Router())
 }

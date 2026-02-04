@@ -2,20 +2,19 @@
 //  AuthenticationView.swift
 //  BetterReads
 //
-//  SwiftUI replacement for AuthViewController + SignInView
+//  Sign in and registration views.
 //
 
 import SwiftUI
 import FirebaseAuth
 
 struct AuthenticationView: View {
+    @Environment(Router.self) private var router
     @State private var email: String = ""
     @State private var password: String = ""
     @State private var isLoading: Bool = false
     @State private var errorMessage: String?
     @State private var showingRegistration: Bool = false
-
-    var onAuthenticationSuccess: (() -> Void)?
 
     var body: some View {
         VStack(spacing: 20) {
@@ -58,10 +57,12 @@ struct AuthenticationView: View {
         }
         .padding(.horizontal, 50)
         .background(Color.primaryBackground)
+        .navigationTitle("Sign In")
+        .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showingRegistration) {
             RegistrationView(onRegistrationSuccess: {
                 showingRegistration = false
-                onAuthenticationSuccess?()
+                router.pop()
             })
         }
     }
@@ -77,7 +78,7 @@ struct AuthenticationView: View {
             if let error {
                 errorMessage = error.localizedDescription
             } else {
-                onAuthenticationSuccess?()
+                router.pop()
             }
         }
     }
