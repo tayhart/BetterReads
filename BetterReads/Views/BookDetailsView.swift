@@ -10,11 +10,15 @@ import SwiftUI
 struct BookDetailsView: View {
     let bookDetails: BookDetails
 
+    @Environment(Router.self) private var router
     @State private var currentStatus: ReadingStatus?
     @State private var isLoading = false
     @State private var isSaving = false
     @State private var errorMessage: String?
     @State private var showingSignInPrompt = false
+
+    private let authService = AuthService.shared
+    private let libraryService = LibraryService.shared
 
     var body: some View {
         ScrollView {
@@ -25,8 +29,18 @@ struct BookDetailsView: View {
             .padding(.horizontal, 12)
         }
         .background(Color(UIColor.systemBackground))
-        .navigationTitle(bookDetails.title)
         .navigationBarTitleDisplayMode(.inline)
+        .task {
+            await fetchCurrentStatus()
+        }
+        .alert("Sign In Required", isPresented: $showingSignInPrompt) {
+            Button("Sign In") {
+                router.navigate(to: .authentication)
+            }
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("Please sign in to add books to your library.")
+        }
     }
 
     // MARK: - Quick Look Section
@@ -56,6 +70,9 @@ struct BookDetailsView: View {
             .padding(10)
 
             VStack(alignment: .leading, spacing: 10) {
+                Text(title)
+                    .font(.headline)
+                    .foregroundStyle(.primary)
 
                 Text(authors)
                     .font(.subheadline)
@@ -71,18 +88,31 @@ struct BookDetailsView: View {
                     Text(rating)
                         .font(.callout)
                 }
-//
-//                Menu {
-//                    ForEach(ReadingStatus.allCases, id: \.self) { listType in
-//                        Button(listType.title) {
-//                        }
-//                    }
-//                } label: {
-//                    Text("Add to list")
-//                        .frame(maxWidth: .infinity, alignment: .leading)
-//                }
-//                .buttonStyle(.borderedProminent)
-//                .tint(Color.cta)
+
+                Menu {
+                    ForEach(ReadingStatus.allCases, id: \.self) { status in
+                        Button {
+                            Task { await saveBook(with: status) }
+                        } label: {
+                            if currentStatus == status {
+                                Label(status.displayTitle, systemImage: "checkmark")
+                            } else {
+                                Text(status.displayTitle)
+                            }
+                        }
+                    }
+                } label: {
+                    if isSaving {
+                        ProgressView()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    } else {
+                        Text(currentStatus?.displayTitle ?? "Add to list")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(currentStatus != nil ? Color.green : Color.cta)
+                .disabled(isSaving)
             }
 
             Spacer()
@@ -120,6 +150,10 @@ struct BookDetailsView: View {
         return URL(string: urlString)
     }
 
+    private var title: String {
+        bookDetails.title
+    }
+
     private var authors: String {
         guard let authors = bookDetails.authors, !authors.isEmpty else {
             return "No author found"
@@ -151,6 +185,34 @@ struct BookDetailsView: View {
     private var descriptionText: String {
         bookDetails.description ?? "No description available"
     }
+
+    // MARK: - Library Operations
+
+    private func fetchCurrentStatus() async {
+        do {
+            currentStatus = try await libraryService.fetchBookStatus(bookId: bookDetails.id)
+        } catch {
+            print("Failed to fetch book status: \(error)")
+        }
+    }
+
+    private func saveBook(with status: ReadingStatus) async {
+        guard authService.isAuthenticated else {
+            showingSignInPrompt = true
+            return
+        }
+
+        isSaving = true
+        defer { isSaving = false }
+
+        do {
+            try await libraryService.saveBook(bookDetails, status: status)
+            currentStatus = status
+        } catch {
+            errorMessage = error.localizedDescription
+            print("Failed to save book: \(error)")
+        }
+    }
 }
 
 #Preview {
@@ -171,5 +233,6 @@ struct BookDetailsView: View {
             isbn13: nil,
             provider: .googleBooks
         ))
+        .environment(Router())
     }
 }
