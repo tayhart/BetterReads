@@ -35,6 +35,8 @@
 		347A58242F32EC7900C9E405 /* UserBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347A58212F32EC7900C9E405 /* UserBook.swift */; };
 		347A58262F32EC7900C9E405 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347A581E2F32EC7900C9E405 /* AuthService.swift */; };
 		347A58282F32EEC800C9E405 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 347A58272F32EEC800C9E405 /* Supabase */; };
+		347A582A2F3461A100C9E405 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347A58292F3461A100C9E405 /* HomeView.swift */; };
+		347A582E2F34683F00C9E405 /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347A582D2F34683F00C9E405 /* String+Extensions.swift */; };
 		347B6AAA2F30592F000E1C7A /* Book.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347B6AA92F30592C000E1C7A /* Book.swift */; };
 		3494E46C2A11F49100C45843 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3494E46B2A11F49000C45843 /* GoogleService-Info.plist */; };
 		3494E46D2A11F49100C45843 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3494E46B2A11F49000C45843 /* GoogleService-Info.plist */; };
@@ -48,7 +50,7 @@
 		34B8D71029A5D35200322178 /* IconUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B8D70E29A5D35200322178 /* IconUtil.swift */; };
 		34B8D71129A5D35200322178 /* IconUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B8D70E29A5D35200322178 /* IconUtil.swift */; };
 		34BF38C827E59A0700474AE3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BF38C727E59A0700474AE3 /* AppDelegate.swift */; };
-		34BF38CA27E59A0700474AE3 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BF38C927E59A0700474AE3 /* SceneDelegate.swift */; };
+		34BF38CB2F346A0100474AE3 /* BetterReadsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BF38CC2F346A0100474AE3 /* BetterReadsApp.swift */; };
 		34BF38D127E59A0700474AE3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 34BF38D027E59A0700474AE3 /* Assets.xcassets */; };
 		34BF38DF27E59A0700474AE3 /* mibraryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BF38DE27E59A0700474AE3 /* mibraryTests.swift */; };
 		34BF38E927E59A0700474AE3 /* mibraryUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BF38E827E59A0700474AE3 /* mibraryUITests.swift */; };
@@ -94,13 +96,15 @@
 		347A581E2F32EC7900C9E405 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		347A58202F32EC7900C9E405 /* SupabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseManager.swift; sourceTree = "<group>"; };
 		347A58212F32EC7900C9E405 /* UserBook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserBook.swift; sourceTree = "<group>"; };
+		347A58292F3461A100C9E405 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		347A582D2F34683F00C9E405 /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
 		347B6AA92F30592C000E1C7A /* Book.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Book.swift; sourceTree = "<group>"; };
 		3494E46B2A11F49000C45843 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
 		34B8D70C29A334BB00322178 /* ColorUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorUtil.swift; sourceTree = "<group>"; };
 		34B8D70E29A5D35200322178 /* IconUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconUtil.swift; sourceTree = "<group>"; };
 		34BF38C427E59A0700474AE3 /* BetterReads.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BetterReads.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		34BF38C727E59A0700474AE3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		34BF38C927E59A0700474AE3 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		34BF38CC2F346A0100474AE3 /* BetterReadsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BetterReadsApp.swift; sourceTree = "<group>"; };
 		34BF38D027E59A0700474AE3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		34BF38D527E59A0700474AE3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		34BF38DA27E59A0700474AE3 /* BetterReadsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BetterReadsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -187,6 +191,7 @@
 		346FDE2F29A1D7AB0060B688 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				347A58292F3461A100C9E405 /* HomeView.swift */,
 				3400000C2A260007003113E1 /* BookDetailsView.swift */,
 				340000042A260003003113E1 /* ProfileView.swift */,
 				340000062A260004003113E1 /* SearchResultRow.swift */,
@@ -198,6 +203,7 @@
 		346FDE3529A1D7EC0060B688 /* Util */ = {
 			isa = PBXGroup;
 			children = (
+				347A582D2F34683F00C9E405 /* String+Extensions.swift */,
 				346FDE3F29A321D40060B688 /* FontUtil.swift */,
 				34B8D70C29A334BB00322178 /* ColorUtil.swift */,
 				34B8D70E29A5D35200322178 /* IconUtil.swift */,
@@ -265,8 +271,8 @@
 				346FDE3529A1D7EC0060B688 /* Util */,
 				346FDE2F29A1D7AB0060B688 /* Views */,
 				34BF38C727E59A0700474AE3 /* AppDelegate.swift */,
+				34BF38CC2F346A0100474AE3 /* BetterReadsApp.swift */,
 				345785DE2873F497008EB7CC /* Search */,
-				34BF38C927E59A0700474AE3 /* SceneDelegate.swift */,
 				34BF38D027E59A0700474AE3 /* Assets.xcassets */,
 				34BF38D527E59A0700474AE3 /* Info.plist */,
 			);
@@ -445,6 +451,7 @@
 				340000092A260005003113E1 /* SearchView.swift in Sources */,
 				3400000D2A260007003113E1 /* BookDetailsView.swift in Sources */,
 				340000112A260009003113E1 /* BookDetails.swift in Sources */,
+				347A582E2F34683F00C9E405 /* String+Extensions.swift in Sources */,
 				340000132A26000A003113E1 /* BookSearchProvider.swift in Sources */,
 				340000152A26000B003113E1 /* OpenLibraryResponse.swift in Sources */,
 				340000172A26000C003113E1 /* GoogleBooksProvider.swift in Sources */,
@@ -453,12 +460,13 @@
 				347A58232F32EC7900C9E405 /* SupabaseManager.swift in Sources */,
 				347A58242F32EC7900C9E405 /* UserBook.swift in Sources */,
 				347A58262F32EC7900C9E405 /* AuthService.swift in Sources */,
+				347A582A2F3461A100C9E405 /* HomeView.swift in Sources */,
 				3400001F2A260011003113E1 /* Router.swift in Sources */,
 				340000212A260012003113E1 /* ContentView.swift in Sources */,
 				34B8D70F29A5D35200322178 /* IconUtil.swift in Sources */,
 				347B6AAA2F30592F000E1C7A /* Book.swift in Sources */,
 				34BF38C827E59A0700474AE3 /* AppDelegate.swift in Sources */,
-				34BF38CA27E59A0700474AE3 /* SceneDelegate.swift in Sources */,
+				34BF38CB2F346A0100474AE3 /* BetterReadsApp.swift in Sources */,
 				34491A262A1EDBC1003113E1 /* RatingUtil.swift in Sources */,
 				347A58142F32EA9100C9E405 /* GoogleBooksResponse.swift in Sources */,
 				34B8D70D29A334BB00322178 /* ColorUtil.swift in Sources */,

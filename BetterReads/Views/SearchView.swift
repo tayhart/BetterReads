@@ -107,20 +107,22 @@ struct SearchView: View {
     @ViewBuilder
     private var bottomToolbar: some View {
         Spacer()
-        Button { } label: {
-            Image(systemName: "house")
+        Button {
+            router.popToRoot()
+        } label: {
+            Image(systemName: Route.home.icon)
         }
         .tint(.teal)
         Spacer()
         Button { } label: {
-            Image(systemName: "magnifyingglass")
+            Image(systemName: Route.search.selectedIcon)
         }
         .tint(.mint)
         Spacer()
         Button {
             router.navigate(to: .profile)
         } label: {
-            Image(systemName: "person")
+            Image(systemName: Route.profile.icon)
         }
         .tint(.pink)
         Spacer()

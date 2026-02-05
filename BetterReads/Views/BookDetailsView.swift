@@ -9,7 +9,12 @@ import SwiftUI
 
 struct BookDetailsView: View {
     let bookDetails: BookDetails
-    @State private var selectedList: ListType?
+
+    @State private var currentStatus: ReadingStatus?
+    @State private var isLoading = false
+    @State private var isSaving = false
+    @State private var errorMessage: String?
+    @State private var showingSignInPrompt = false
 
     var body: some View {
         ScrollView {
@@ -51,9 +56,6 @@ struct BookDetailsView: View {
             .padding(10)
 
             VStack(alignment: .leading, spacing: 10) {
-                Text(title)
-                    .font(.title2)
-                    .fontWeight(.bold)
 
                 Text(authors)
                     .font(.subheadline)
@@ -65,21 +67,22 @@ struct BookDetailsView: View {
                 Text(pageCount)
                     .font(.callout)
 
-                Text(rating)
-                    .font(.callout)
-
-                Menu {
-                    ForEach(ListType.allCases, id: \.self) { listType in
-                        Button(listType.title) {
-                            selectedList = listType
-                        }
-                    }
-                } label: {
-                    Text(selectedList?.title ?? "Add to list")
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                if let rating {
+                    Text(rating)
+                        .font(.callout)
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(Color.cta)
+//
+//                Menu {
+//                    ForEach(ReadingStatus.allCases, id: \.self) { listType in
+//                        Button(listType.title) {
+//                        }
+//                    }
+//                } label: {
+//                    Text("Add to list")
+//                        .frame(maxWidth: .infinity, alignment: .leading)
+//                }
+//                .buttonStyle(.borderedProminent)
+//                .tint(Color.cta)
             }
 
             Spacer()
@@ -117,10 +120,6 @@ struct BookDetailsView: View {
         return URL(string: urlString)
     }
 
-    private var title: String {
-        bookDetails.title
-    }
-
     private var authors: String {
         guard let authors = bookDetails.authors, !authors.isEmpty else {
             return "No author found"
@@ -129,7 +128,7 @@ struct BookDetailsView: View {
     }
 
     private var publishDate: String {
-        guard let date = bookDetails.publishedDate else {
+        guard let date = bookDetails.publishedDate?.dateYear else {
             return "Unknown published date"
         }
         return "Published in \(date)"
@@ -142,9 +141,9 @@ struct BookDetailsView: View {
         return "\(count) pages"
     }
 
-    private var rating: String {
+    private var rating: String? {
         guard let rating = bookDetails.averageRating else {
-            return "Unrated"
+            return nil
         }
         return "\(rating) out of 5"
     }

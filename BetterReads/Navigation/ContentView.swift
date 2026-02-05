@@ -12,7 +12,7 @@ struct ContentView: View {
 
     var body: some View {
         NavigationStack(path: $router.path) {
-            SearchView()
+            HomeView()
                 .navigationDestination(for: Route.self) { route in
                     destinationView(for: route)
                 }
@@ -23,6 +23,8 @@ struct ContentView: View {
     @ViewBuilder
     private func destinationView(for route: Route) -> some View {
         switch route {
+        case .home:
+            HomeView()
         case .search:
             SearchView()
         case .bookDetails(let details):
