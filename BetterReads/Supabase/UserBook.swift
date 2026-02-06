@@ -22,6 +22,7 @@ struct UserBook: Codable, Identifiable {
     let updatedAt: Date
 
     // Optional fields for tracking
+    let currentPage: Int?
     let rating: Int?
     let notes: String?
     let startedAt: Date?
@@ -39,10 +40,16 @@ struct UserBook: Codable, Identifiable {
         case provider
         case createdAt = "created_at"
         case updatedAt = "updated_at"
+        case currentPage = "current_page"
         case rating
         case notes
         case startedAt = "started_at"
         case finishedAt = "finished_at"
+    }
+
+    var progressPercentage: Double {
+        guard let total = pageCount, total > 0, let current = currentPage else { return 0 }
+        return min(Double(current) / Double(total), 1.0)
     }
 }
 
@@ -95,6 +102,22 @@ struct UpdateUserBookStatus: Codable {
 
     init(status: ReadingStatus) {
         self.status = status
+        self.updatedAt = Date()
+    }
+}
+
+/// Data transfer object for updating reading progress
+struct UpdateUserBookProgress: Codable {
+    let currentPage: Int
+    let updatedAt: Date
+
+    enum CodingKeys: String, CodingKey {
+        case currentPage = "current_page"
+        case updatedAt = "updated_at"
+    }
+
+    init(currentPage: Int) {
+        self.currentPage = currentPage
         self.updatedAt = Date()
     }
 }

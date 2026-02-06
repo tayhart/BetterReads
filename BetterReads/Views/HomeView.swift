@@ -62,7 +62,9 @@ struct HomeView: View {
                 if let statusBooks = groupedBooks[status], !statusBooks.isEmpty {
                     Section(status.displayTitle) {
                         ForEach(statusBooks) { book in
-                            BookRow(book: book)
+                            BookRow(book: book) { newPage in
+                                await updateProgress(for: book, to: newPage)
+                            }
                         }
                     }
                 }
@@ -113,12 +115,29 @@ struct HomeView: View {
             print("Failed to fetch books: \(error)")
         }
     }
+
+    private func updateProgress(for book: UserBook, to page: Int) async {
+        do {
+            try await libraryService.updateProgress(bookId: book.bookId, currentPage: page)
+            await fetchBooks()
+        } catch {
+            print("Failed to update progress: \(error)")
+        }
+    }
 }
 
 // MARK: - Book Row
 
 private struct BookRow: View {
     let book: UserBook
+    let onProgressUpdate: ((Int) async -> Void)?
+
+    @State private var showingProgressSheet = false
+
+    init(book: UserBook, onProgressUpdate: ((Int) async -> Void)? = nil) {
+        self.book = book
+        self.onProgressUpdate = onProgressUpdate
+    }
 
     var body: some View {
         HStack(spacing: 12) {
@@ -153,7 +172,9 @@ private struct BookRow: View {
                         .lineLimit(1)
                 }
 
-                if let pageCount = book.pageCount {
+                if book.status == .currentlyReading {
+                    progressView
+                } else if let pageCount = book.pageCount {
                     Text("\(pageCount) pages")
                         .font(.caption2)
                         .foregroundStyle(.tertiary)
@@ -163,6 +184,98 @@ private struct BookRow: View {
             Spacer()
         }
         .padding(.vertical, 4)
+        .sheet(isPresented: $showingProgressSheet) {
+            ProgressUpdateSheet(book: book, onSave: onProgressUpdate)
+                .presentationDetents([.height(200)])
+        }
+    }
+
+    @ViewBuilder
+    private var progressView: some View {
+        Button {
+            showingProgressSheet = true
+        } label: {
+            VStack(alignment: .leading, spacing: 2) {
+                ProgressView(value: book.progressPercentage)
+                    .tint(.green)
+
+                if let pageCount = book.pageCount {
+                    Text("\(book.currentPage ?? 0) of \(pageCount) pages")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
+            }
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+// MARK: - Progress Update Sheet
+
+private struct ProgressUpdateSheet: View {
+    let book: UserBook
+    let onSave: ((Int) async -> Void)?
+
+    @Environment(\.dismiss) private var dismiss
+    @State private var currentPage: Int
+    @State private var isSaving = false
+
+    init(book: UserBook, onSave: ((Int) async -> Void)?) {
+        self.book = book
+        self.onSave = onSave
+        self._currentPage = State(initialValue: book.currentPage ?? 0)
+    }
+
+    private var maxPages: Int {
+        book.pageCount ?? 1000
+    }
+
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 20) {
+                Text("Update Progress")
+                    .font(.headline)
+
+                HStack {
+                    Text("Page")
+                    TextField("Page", value: $currentPage, format: .number)
+                        .textFieldStyle(.roundedBorder)
+                        .keyboardType(.numberPad)
+                        .frame(width: 80)
+                    Text("of \(maxPages)")
+                        .foregroundStyle(.secondary)
+                }
+
+                Slider(
+                    value: Binding(
+                        get: { Double(currentPage) },
+                        set: { currentPage = Int($0) }
+                    ),
+                    in: 0...Double(maxPages),
+                    step: 1
+                )
+                .tint(.green)
+
+                Spacer()
+            }
+            .padding()
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") {
+                        Task {
+                            isSaving = true
+                            await onSave?(currentPage)
+                            isSaving = false
+                            dismiss()
+                        }
+                    }
+                    .disabled(isSaving)
+                }
+            }
+        }
     }
 }
 

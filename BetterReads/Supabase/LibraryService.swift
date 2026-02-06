@@ -13,6 +13,7 @@ protocol LibraryServiceProtocol {
     func fetchBookStatus(bookId: String) async throws -> ReadingStatus?
     func saveBook(_ bookDetails: BookDetails, status: ReadingStatus) async throws
     func updateStatus(bookId: String, status: ReadingStatus) async throws
+    func updateProgress(bookId: String, currentPage: Int) async throws
     func removeBook(bookId: String) async throws
 }
 
@@ -86,6 +87,21 @@ final class LibraryService: LibraryServiceProtocol {
         }
 
         let update = UpdateUserBookStatus(status: status)
+
+        try await database
+            .from("user_books")
+            .update(update)
+            .eq("user_id", value: userId.uuidString)
+            .eq("book_id", value: bookId)
+            .execute()
+    }
+
+    func updateProgress(bookId: String, currentPage: Int) async throws {
+        guard let userId = currentUserId else {
+            throw LibraryError.notAuthenticated
+        }
+
+        let update = UpdateUserBookProgress(currentPage: currentPage)
 
         try await database
             .from("user_books")
