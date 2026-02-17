@@ -29,6 +29,8 @@ struct ContentView: View {
             SearchView()
         case .bookDetails(let details):
             BookDetailsView(bookDetails: details)
+        case .reading(let book):
+            ReadingView(book: book)
         case .profile:
             ProfileView()
         case .authentication:

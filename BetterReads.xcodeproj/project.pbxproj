@@ -37,6 +37,7 @@
 		347A58262F32EC7900C9E405 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347A581E2F32EC7900C9E405 /* AuthService.swift */; };
 		347A58282F32EEC800C9E405 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 347A58272F32EEC800C9E405 /* Supabase */; };
 		347A582A2F3461A100C9E405 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347A58292F3461A100C9E405 /* HomeView.swift */; };
+		347A58322F34800000C9E405 /* ReadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347A58312F34800000C9E405 /* ReadingView.swift */; };
 		347A582E2F34683F00C9E405 /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347A582D2F34683F00C9E405 /* String+Extensions.swift */; };
 		347B6AAA2F30592F000E1C7A /* Book.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347B6AA92F30592C000E1C7A /* Book.swift */; };
 		3494E46C2A11F49100C45843 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3494E46B2A11F49000C45843 /* GoogleService-Info.plist */; };
@@ -99,6 +100,7 @@
 		347A58212F32EC7900C9E405 /* UserBook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserBook.swift; sourceTree = "<group>"; };
 		347A582F2F34700000C9E405 /* LibraryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryService.swift; sourceTree = "<group>"; };
 		347A58292F3461A100C9E405 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		347A58312F34800000C9E405 /* ReadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingView.swift; sourceTree = "<group>"; };
 		347A582D2F34683F00C9E405 /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
 		347B6AA92F30592C000E1C7A /* Book.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Book.swift; sourceTree = "<group>"; };
 		3494E46B2A11F49000C45843 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
@@ -195,6 +197,7 @@
 			children = (
 				347A58292F3461A100C9E405 /* HomeView.swift */,
 				3400000C2A260007003113E1 /* BookDetailsView.swift */,
+				347A58312F34800000C9E405 /* ReadingView.swift */,
 				340000042A260003003113E1 /* ProfileView.swift */,
 				340000062A260004003113E1 /* SearchResultRow.swift */,
 				340000082A260005003113E1 /* SearchView.swift */,
@@ -465,6 +468,7 @@
 				347A58302F34700000C9E405 /* LibraryService.swift in Sources */,
 				347A58262F32EC7900C9E405 /* AuthService.swift in Sources */,
 				347A582A2F3461A100C9E405 /* HomeView.swift in Sources */,
+				347A58322F34800000C9E405 /* ReadingView.swift in Sources */,
 				3400001F2A260011003113E1 /* Router.swift in Sources */,
 				340000212A260012003113E1 /* ContentView.swift in Sources */,
 				34B8D70F29A5D35200322178 /* IconUtil.swift in Sources */,

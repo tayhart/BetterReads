@@ -57,22 +57,54 @@ struct HomeView: View {
     }
 
     private var libraryList: some View {
-        List {
-            ForEach(ReadingStatus.allCases, id: \.self) { status in
-                if let statusBooks = groupedBooks[status], !statusBooks.isEmpty {
-                    Section(status.displayTitle) {
-                        ForEach(statusBooks) { book in
-                            BookRow(book: book) { newPage in
-                                await updateProgress(for: book, to: newPage)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 24) {
+                if let currentBooks = groupedBooks[.currentlyReading], !currentBooks.isEmpty {
+                    currentlyReadingSection(currentBooks)
+                }
+
+                ForEach(ReadingStatus.allCases.filter { $0 != .currentlyReading }, id: \.self) { status in
+                    if let statusBooks = groupedBooks[status], !statusBooks.isEmpty {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(status.displayTitle)
+                                .font(.title3)
+                                .fontWeight(.semibold)
+                                .padding(.horizontal)
+
+                            ForEach(statusBooks) { book in
+                                BookRow(book: book)
+                                    .padding(.horizontal)
+                                Divider()
+                                    .padding(.leading)
                             }
                         }
                     }
                 }
             }
+            .padding(.vertical)
         }
-        .listStyle(.plain)
         .refreshable {
             await fetchBooks()
+        }
+    }
+
+    private func currentlyReadingSection(_ books: [UserBook]) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(ReadingStatus.currentlyReading.displayTitle)
+                .font(.title3)
+                .fontWeight(.semibold)
+                .padding(.horizontal)
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                LazyHStack(spacing: 16) {
+                    ForEach(books) { book in
+                        BookCard(book: book) { newPage in
+                            await updateProgress(for: book, to: newPage)
+                        }
+                    }
+                }
+                .padding(.horizontal)
+            }
         }
     }
 
@@ -192,27 +224,125 @@ private struct BookRow: View {
 
     @ViewBuilder
     private var progressView: some View {
-        Button {
-            showingProgressSheet = true
-        } label: {
-            VStack(alignment: .leading, spacing: 2) {
-                ProgressView(value: book.progressPercentage)
-                    .tint(.green)
+        VStack(alignment: .leading, spacing: 6) {
+            ProgressView(value: book.progressPercentage)
+                .tint(.green)
 
-                if let pageCount = book.pageCount {
-                    Text("\(book.currentPage ?? 0) of \(pageCount) pages")
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
+            if let pageCount = book.pageCount {
+                Button {
+                    showingProgressSheet = true
+                } label: {
+                    HStack(spacing: 4) {
+                        Text("\(book.currentPage ?? 0) of \(pageCount) pages")
+                            .font(.caption2)
+                            .fontWeight(.medium)
+                        Image(systemName: "pencil")
+                            .font(.caption2)
+                    }
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(.green.opacity(0.15))
+                    .foregroundStyle(.green)
+                    .clipShape(Capsule())
                 }
             }
         }
-        .buttonStyle(.plain)
+    }
+}
+
+// MARK: - Book Card (Currently Reading)
+
+private struct BookCard: View {
+    let book: UserBook
+    let onProgressUpdate: ((Int) async -> Void)?
+
+    @Environment(Router.self) private var router
+    @State private var showingProgressSheet = false
+
+    init(book: UserBook, onProgressUpdate: ((Int) async -> Void)? = nil) {
+        self.book = book
+        self.onProgressUpdate = onProgressUpdate
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 12) {
+                AsyncImage(url: URL(string: book.coverUrl ?? "")) { phase in
+                    switch phase {
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                    case .empty, .failure:
+                        Image(systemName: "book.closed")
+                            .font(.title2)
+                            .foregroundStyle(.secondary)
+                    @unknown default:
+                        EmptyView()
+                    }
+                }
+                .frame(width: 60, height: 90)
+                .background(Color.gray.opacity(0.1))
+                .clipShape(RoundedRectangle(cornerRadius: 6))
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(book.title)
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                        .lineLimit(2)
+
+                    if let authors = book.authors, !authors.isEmpty {
+                        Text(authors.joined(separator: ", "))
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                    }
+
+                    Spacer(minLength: 0)
+                }
+            }
+            .contentShape(Rectangle())
+            .onTapGesture {
+                router.navigate(to: .reading(book))
+            }
+
+            ProgressView(value: book.progressPercentage)
+                .tint(.green)
+
+            if let pageCount = book.pageCount {
+                Button {
+                    showingProgressSheet = true
+                } label: {
+                    HStack(spacing: 4) {
+                        Text("\(book.currentPage ?? 0) of \(pageCount) pages")
+                            .font(.caption2)
+                            .fontWeight(.medium)
+                        Image(systemName: "pencil")
+                            .font(.caption2)
+                    }
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(.green.opacity(0.15))
+                    .foregroundStyle(.green)
+                    .clipShape(Capsule())
+                }
+            }
+        }
+        .padding()
+        .frame(width: 220)
+        .background(.regularMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .shadow(color: .black.opacity(0.08), radius: 4, y: 2)
+        .sheet(isPresented: $showingProgressSheet) {
+            ProgressUpdateSheet(book: book, onSave: onProgressUpdate)
+                .presentationDetents([.height(200)])
+        }
     }
 }
 
 // MARK: - Progress Update Sheet
 
-private struct ProgressUpdateSheet: View {
+struct ProgressUpdateSheet: View {
     let book: UserBook
     let onSave: ((Int) async -> Void)?
 

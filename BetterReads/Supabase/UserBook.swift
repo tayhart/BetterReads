@@ -8,7 +8,15 @@
 import Foundation
 
 /// Represents a book in a user's reading list, stored in Supabase
-struct UserBook: Codable, Identifiable {
+struct UserBook: Codable, Identifiable, Hashable {
+    static func == (lhs: UserBook, rhs: UserBook) -> Bool {
+        lhs.id == rhs.id
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+
     let id: UUID
     let userId: UUID
     let bookId: String  // External ID from Google Books or Open Library
@@ -50,6 +58,27 @@ struct UserBook: Codable, Identifiable {
     var progressPercentage: Double {
         guard let total = pageCount, total > 0, let current = currentPage else { return 0 }
         return min(Double(current) / Double(total), 1.0)
+    }
+
+    /// Convert to BookDetails for navigation to the volume/details view
+    func toBookDetails() -> BookDetails {
+        let bookProvider: BookDetails.BookProvider = provider == "openLibrary" ? .openLibrary : .googleBooks
+        return BookDetails(
+            id: bookId,
+            title: title,
+            authors: authors,
+            publisher: nil,
+            publishedDate: nil,
+            description: nil,
+            pageCount: pageCount,
+            averageRating: nil,
+            ratingsCount: nil,
+            categories: nil,
+            imageLinks: coverUrl.map { BookImageLinks(thumbnail: $0, small: nil, medium: nil, large: nil) },
+            isbn10: nil,
+            isbn13: nil,
+            provider: bookProvider
+        )
     }
 }
 
