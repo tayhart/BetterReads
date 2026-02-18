@@ -31,6 +31,10 @@ struct ContentView: View {
             BookDetailsView(bookDetails: details)
         case .reading(let book):
             ReadingView(book: book)
+        case .currentlyReading(let books):
+            CurrentlyReadingView(books: books)
+        case .toRead(let books):
+            ToReadView(books: books)
         case .profile:
             ProfileView()
         case .authentication:

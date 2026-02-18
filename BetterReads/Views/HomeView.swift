@@ -63,7 +63,11 @@ struct HomeView: View {
                     currentlyReadingSection(currentBooks)
                 }
 
-                ForEach(ReadingStatus.allCases.filter { $0 != .currentlyReading }, id: \.self) { status in
+                if let toReadBooks = groupedBooks[.toRead], !toReadBooks.isEmpty {
+                    toReadSection(toReadBooks)
+                }
+
+                ForEach(ReadingStatus.allCases.filter { $0 != .currentlyReading && $0 != .toRead }, id: \.self) { status in
                     if let statusBooks = groupedBooks[status], !statusBooks.isEmpty {
                         VStack(alignment: .leading, spacing: 8) {
                             Text(status.displayTitle)
@@ -90,10 +94,20 @@ struct HomeView: View {
 
     private func currentlyReadingSection(_ books: [UserBook]) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(ReadingStatus.currentlyReading.displayTitle)
-                .font(.title3)
-                .fontWeight(.semibold)
-                .padding(.horizontal)
+            Button {
+                router.navigate(to: .currentlyReading(books))
+            } label: {
+                HStack {
+                    Text(ReadingStatus.currentlyReading.displayTitle)
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                    Image(systemName: "chevron.right")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                }
+                .foregroundColor(.black)
+            }
+            .padding(.horizontal)
 
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: 16) {
@@ -101,6 +115,34 @@ struct HomeView: View {
                         BookCard(book: book) { newPage in
                             await updateProgress(for: book, to: newPage)
                         }
+                    }
+                }
+                .padding(.horizontal)
+            }
+        }
+    }
+
+    private func toReadSection(_ books: [UserBook]) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Button {
+                router.navigate(to: .toRead(books))
+            } label: {
+                HStack {
+                    Text(ReadingStatus.toRead.displayTitle)
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                    Image(systemName: "chevron.right")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                }
+                .foregroundColor(.black)
+            }
+            .padding(.horizontal)
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                LazyHStack(spacing: 16) {
+                    ForEach(books) { book in
+                        BookCard(book: book)
                     }
                 }
                 .padding(.horizontal)
