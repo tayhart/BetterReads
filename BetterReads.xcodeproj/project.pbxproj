@@ -51,6 +51,7 @@
 		3494E4732A11F57100C45843 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 3494E4722A11F57100C45843 /* FirebaseCrashlytics */; };
 		3494E4752A11F57100C45843 /* FirebaseDatabaseSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 3494E4742A11F57100C45843 /* FirebaseDatabaseSwift */; };
 		3494E4782A11FD8D00C45843 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 3494E4772A11FD8D00C45843 /* FirebaseAuth */; };
+		34B797062F51FDE6005CD92A /* CachedBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B797052F51FDE1005CD92A /* CachedBook.swift */; };
 		34B8D70D29A334BB00322178 /* ColorUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B8D70C29A334BB00322178 /* ColorUtil.swift */; };
 		34B8D70F29A5D35200322178 /* IconUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B8D70E29A5D35200322178 /* IconUtil.swift */; };
 		34B8D71029A5D35200322178 /* IconUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B8D70E29A5D35200322178 /* IconUtil.swift */; };
@@ -112,6 +113,7 @@
 		347A58412F3A000100C9E405 /* ToReadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToReadView.swift; sourceTree = "<group>"; };
 		347B6AA92F30592C000E1C7A /* Book.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Book.swift; sourceTree = "<group>"; };
 		3494E46B2A11F49000C45843 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
+		34B797052F51FDE1005CD92A /* CachedBook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedBook.swift; sourceTree = "<group>"; };
 		34B8D70C29A334BB00322178 /* ColorUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorUtil.swift; sourceTree = "<group>"; };
 		34B8D70E29A5D35200322178 /* IconUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconUtil.swift; sourceTree = "<group>"; };
 		34BF38C427E59A0700474AE3 /* BetterReads.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BetterReads.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -240,6 +242,7 @@
 		347A58222F32EC7900C9E405 /* Supabase */ = {
 			isa = PBXGroup;
 			children = (
+				34B797052F51FDE1005CD92A /* CachedBook.swift */,
 				347A582F2F34700000C9E405 /* LibraryService.swift */,
 				347A58202F32EC7900C9E405 /* SupabaseManager.swift */,
 				347A58212F32EC7900C9E405 /* UserBook.swift */,
@@ -476,6 +479,7 @@
 				340000072A260004003113E1 /* SearchResultRow.swift in Sources */,
 				340000092A260005003113E1 /* SearchView.swift in Sources */,
 				3400000D2A260007003113E1 /* BookDetailsView.swift in Sources */,
+				34B797062F51FDE6005CD92A /* CachedBook.swift in Sources */,
 				340000112A260009003113E1 /* BookDetails.swift in Sources */,
 				347A582E2F34683F00C9E405 /* String+Extensions.swift in Sources */,
 				340289072F458CCB00544FA7 /* ProgressUpdateSheet.swift in Sources */,

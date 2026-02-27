@@ -150,6 +150,7 @@ class SearchViewModel: ObservableObject {
 
     func search(query: String) {
         isLoading = true
+        defer { isLoading = false }
         searchResults = []
         error = nil
 
@@ -157,13 +158,15 @@ class SearchViewModel: ObservableObject {
             do {
                 let results = try await provider.search(query: query)
                 self.searchResults = results
-                self.isLoading = false
+
+                // save results to db
+                Task {
+                    await LibraryService.shared.cacheBooks(results)
+                }
             } catch let searchError as BookSearchError {
                 self.error = searchError
-                self.isLoading = false
             } catch {
                 self.error = .networkError(error)
-                self.isLoading = false
             }
         }
     }

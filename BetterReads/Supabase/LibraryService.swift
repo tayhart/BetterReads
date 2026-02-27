@@ -81,6 +81,18 @@ final class LibraryService: LibraryServiceProtocol {
             .execute()
     }
 
+    func cacheBooks(_ results: [BookSearchResult]) async {
+        let cachedBooks = results.map { CachedBook(from: $0.details) }
+        do {
+            try await SupabaseManager.shared.database
+                .from("books")
+                .upsert(cachedBooks, onConflict: "id,provider")
+                .execute()
+        } catch {
+            print("Failed to cache books: \(error)")
+        }
+    }
+
     func updateStatus(bookId: String, status: ReadingStatus) async throws {
         guard let userId = currentUserId else {
             throw LibraryError.notAuthenticated
