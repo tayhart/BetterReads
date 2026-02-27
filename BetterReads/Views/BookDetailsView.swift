@@ -92,7 +92,11 @@ struct BookDetailsView: View {
                 Menu {
                     ForEach(ReadingStatus.allCases, id: \.self) { status in
                         Button {
-                            Task { await saveBook(with: status) }
+                            if currentStatus == status {
+                                Task { await removeBook() }
+                            } else {
+                                Task { await saveBook(with: status) }
+                            }
                         } label: {
                             if currentStatus == status {
                                 Label(status.displayTitle, systemImage: "checkmark")
@@ -193,6 +197,24 @@ struct BookDetailsView: View {
             currentStatus = try await libraryService.fetchBookStatus(bookId: bookDetails.id)
         } catch {
             print("Failed to fetch book status: \(error)")
+        }
+    }
+
+    private func removeBook() async {
+        guard authService.isAuthenticated else {
+            showingSignInPrompt = true
+            return
+        }
+
+        isSaving = true
+        defer { isSaving = false }
+
+        do {
+            try await libraryService.removeBook(bookId: bookDetails.id)
+            currentStatus = nil
+        } catch {
+            errorMessage = error.localizedDescription
+            print("Failed to remove book: \(error)")
         }
     }
 

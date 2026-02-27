@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ReadingView: View {
+    @Environment(Router.self) private var router
     @State private var book: UserBook
     @State private var showingProgressSheet = false
     @State private var isSaving = false
@@ -94,7 +95,11 @@ struct ReadingView: View {
                 Menu {
                     ForEach(ReadingStatus.allCases, id: \.self) { status in
                         Button {
-                            Task { await updateStatus(to: status) }
+                            if book.status == status {
+                                Task { await removeBook() }
+                            } else {
+                                Task { await updateStatus(to: status) }
+                            }
                         } label: {
                             if book.status == status {
                                 Label(status.displayTitle, systemImage: "checkmark")
@@ -138,6 +143,19 @@ struct ReadingView: View {
             await refetchBook()
         } catch {
             print("Failed to update progress: \(error)")
+        }
+    }
+
+    private func removeBook() async {
+        isSaving = true
+        defer { isSaving = false }
+
+        do {
+            try await libraryService.removeBook(bookId: book.bookId)
+            router.pop()
+            router.navigate(to: .bookDetails(book.toBookDetails()))
+        } catch {
+            print("Failed to remove book: \(error)")
         }
     }
 
