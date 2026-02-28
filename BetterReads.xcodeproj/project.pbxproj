@@ -17,6 +17,7 @@
 		340000132A26000A003113E1 /* BookSearchProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340000122A26000A003113E1 /* BookSearchProvider.swift */; };
 		340000152A26000B003113E1 /* OpenLibraryResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340000142A26000B003113E1 /* OpenLibraryResponse.swift */; };
 		340000172A26000C003113E1 /* GoogleBooksProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340000162A26000C003113E1 /* GoogleBooksProvider.swift */; };
+		34B797082F520001005CD92A /* SupabaseSearchProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B797072F520001005CD92A /* SupabaseSearchProvider.swift */; };
 		340000192A26000D003113E1 /* OpenLibraryProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340000182A26000D003113E1 /* OpenLibraryProvider.swift */; };
 		3400001C2A26000F003113E1 /* ReadingStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3400001B2A26000F003113E1 /* ReadingStatus.swift */; };
 		3400001F2A260011003113E1 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3400001E2A260011003113E1 /* Router.swift */; };
@@ -92,6 +93,7 @@
 		340000122A26000A003113E1 /* BookSearchProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookSearchProvider.swift; sourceTree = "<group>"; };
 		340000142A26000B003113E1 /* OpenLibraryResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenLibraryResponse.swift; sourceTree = "<group>"; };
 		340000162A26000C003113E1 /* GoogleBooksProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleBooksProvider.swift; sourceTree = "<group>"; };
+		34B797072F520001005CD92A /* SupabaseSearchProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseSearchProvider.swift; sourceTree = "<group>"; };
 		340000182A26000D003113E1 /* OpenLibraryProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenLibraryProvider.swift; sourceTree = "<group>"; };
 		3400001B2A26000F003113E1 /* ReadingStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingStatus.swift; sourceTree = "<group>"; };
 		3400001E2A260011003113E1 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
@@ -168,6 +170,7 @@
 			children = (
 				340000162A26000C003113E1 /* GoogleBooksProvider.swift */,
 				340000182A26000D003113E1 /* OpenLibraryProvider.swift */,
+				34B797072F520001005CD92A /* SupabaseSearchProvider.swift */,
 			);
 			path = Providers;
 			sourceTree = "<group>";
@@ -487,6 +490,7 @@
 				340000152A26000B003113E1 /* OpenLibraryResponse.swift in Sources */,
 				340000172A26000C003113E1 /* GoogleBooksProvider.swift in Sources */,
 				340000192A26000D003113E1 /* OpenLibraryProvider.swift in Sources */,
+				34B797082F520001005CD92A /* SupabaseSearchProvider.swift in Sources */,
 				3400001C2A26000F003113E1 /* ReadingStatus.swift in Sources */,
 				347A58232F32EC7900C9E405 /* SupabaseManager.swift in Sources */,
 				340289042F45830300544FA7 /* BookCard.swift in Sources */,

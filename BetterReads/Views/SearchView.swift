@@ -15,7 +15,7 @@ struct SearchView: View {
 
     @State private var searchText: String = ""
 
-    init(provider: BookSearchProvider = GoogleBooksProvider()) {
+    init(provider: BookSearchProvider = SupabaseSearchProvider()) {
         _viewModel = StateObject(wrappedValue: SearchViewModel(provider: provider))
     }
 
@@ -144,7 +144,7 @@ class SearchViewModel: ObservableObject {
 
     private let provider: BookSearchProvider
 
-    init(provider: BookSearchProvider = GoogleBooksProvider()) {
+    init(provider: BookSearchProvider = SupabaseSearchProvider()) {
         self.provider = provider
     }
 
@@ -158,11 +158,6 @@ class SearchViewModel: ObservableObject {
             do {
                 let results = try await provider.search(query: query)
                 self.searchResults = results
-
-                // save results to db
-                Task {
-                    await LibraryService.shared.cacheBooks(results)
-                }
             } catch let searchError as BookSearchError {
                 self.error = searchError
             } catch {
