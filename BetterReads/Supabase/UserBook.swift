@@ -9,14 +9,6 @@ import Foundation
 
 /// Represents a book in a user's reading list, stored in Supabase
 struct UserBook: Codable, Identifiable, Hashable {
-    static func == (lhs: UserBook, rhs: UserBook) -> Bool {
-        lhs.id == rhs.id
-    }
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-
     let id: UUID
     let userId: UUID
     let bookId: String  // External ID from Google Books or Open Library
@@ -31,7 +23,7 @@ struct UserBook: Codable, Identifiable, Hashable {
 
     // Optional fields for tracking
     let currentPage: Int?
-    let rating: Int?
+    let rating: Double?
     let notes: String?
     let startedAt: Date?
     let finishedAt: Date?
@@ -131,6 +123,54 @@ struct UpdateUserBookStatus: Codable {
 
     init(status: ReadingStatus) {
         self.status = status
+        self.updatedAt = Date()
+    }
+}
+
+/// Data transfer object for updating a user book's rating
+struct UpdateUserBookRating: Codable {
+    let rating: Double
+    let updatedAt: Date
+
+    enum CodingKeys: String, CodingKey {
+        case rating
+        case updatedAt = "updated_at"
+    }
+
+    init(rating: Double) {
+        self.rating = rating
+        self.updatedAt = Date()
+    }
+}
+
+/// Data transfer object for updating a user book's start date
+struct UpdateUserBookStartDate: Codable {
+    let startedAt: Date
+    let updatedAt: Date
+
+    enum CodingKeys: String, CodingKey {
+        case startedAt = "started_at"
+        case updatedAt = "updated_at"
+    }
+
+    init(date: Date) {
+        self.startedAt = date
+        self.updatedAt = Date()
+    }
+}
+
+/// Data transfer object for updating a user book's finish date
+struct UpdateUserBookFinishDate: Codable {
+    let finishedAt: Date
+    let updatedAt: Date
+
+    enum CodingKeys: String, CodingKey {
+        case finishedAt = "finished_at"
+        case updatedAt = "updated_at"
+    }
+
+    init(date: Date) {
+        self.finishedAt = date
         self.updatedAt = Date()
     }
 }

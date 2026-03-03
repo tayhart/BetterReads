@@ -15,6 +15,7 @@ enum Route: Hashable {
     case reading(UserBook)
     case currentlyReading([UserBook])
     case toRead([UserBook])
+    case recentlyRead([UserBook])
     case profile
     case authentication
 
@@ -26,7 +27,7 @@ enum Route: Hashable {
             return "magnifyingglass.circle"
         case .profile:
             return "person"
-        case .bookDetails, .reading, .currentlyReading, .toRead, .authentication:
+        case .bookDetails, .reading, .currentlyReading, .toRead, .recentlyRead, .authentication:
             return ""
         }
     }
@@ -39,7 +40,7 @@ enum Route: Hashable {
             return "magnifyingglass.circle.fill"
         case .profile:
             return "person.fill"
-        case .bookDetails, .reading, .currentlyReading, .toRead, .authentication:
+        case .bookDetails, .reading, .currentlyReading, .toRead, .recentlyRead, .authentication:
             return ""
         }
     }

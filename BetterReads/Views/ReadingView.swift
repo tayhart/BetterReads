@@ -8,9 +8,15 @@
 import SwiftUI
 
 struct ReadingView: View {
+    private enum DateField { case started, finished }
+
     @Environment(Router.self) private var router
     @State private var book: UserBook
     @State private var showingProgressSheet = false
+    @State private var showingDatePicker = false
+    @State private var editingDateField: DateField = .started
+    @State private var pickerDate = Date()
+    @State private var optimisticRating: Double?
     @State private var isSaving = false
 
     private let libraryService = LibraryService.shared
@@ -56,40 +62,79 @@ struct ReadingView: View {
                 }
 
                 // Progress
-                VStack(spacing: 8) {
-                    ProgressView(value: book.progressPercentage)
-                        .tint(.green)
-                        .scaleEffect(y: 2)
-
-                    Text("\(Int(book.progressPercentage * 100))% complete")
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                        .foregroundStyle(.secondary)
-
-                    if let pageCount = book.pageCount {
-                        Text("Page \(book.currentPage ?? 0) of \(pageCount)")
-                            .font(.caption)
-                            .foregroundStyle(.tertiary)
-                    }
-                }
-                .padding(.horizontal)
-
-                // Update Progress Button
                 Button {
                     showingProgressSheet = true
                 } label: {
-                    HStack(spacing: 6) {
-                        Image(systemName: "pencil")
-                        Text("Update progress")
+                    VStack(spacing: 8) {
+                        ProgressView(value: book.progressPercentage)
+                            .tint(.green)
+                            .scaleEffect(y: 2)
+
+                        Text("\(Int(book.progressPercentage * 100))% complete")
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                            .foregroundStyle(.secondary)
+
+                        HStack(spacing: 4) {
+                            if let pageCount = book.pageCount {
+                                Text("Page \(book.currentPage ?? 0) of \(pageCount)")
+                                    .font(.caption)
+                                    .foregroundStyle(.tertiary)
+                            }
+                        }
                     }
-                    .font(.subheadline)
-                    .fontWeight(.medium)
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 10)
-                    .background(.green.opacity(0.15))
-                    .foregroundStyle(.green)
-                    .clipShape(Capsule())
+                    .foregroundStyle(.foreground)
                 }
+                .padding(.horizontal)
+
+                // Dates & Rating
+                VStack(spacing: 12) {
+                    let showStarted = book.status == .currentlyReading || book.startedAt != nil
+                    let showFinished = book.status == .read || book.finishedAt != nil
+                    if showStarted || showFinished {
+                        VStack(spacing: 0) {
+                            if showStarted {
+                                dateRow(label: "Started", date: book.startedAt) {
+                                    editingDateField = .started
+                                    pickerDate = book.startedAt ?? Date()
+                                    showingDatePicker = true
+                                }
+                            }
+                            if showStarted && showFinished { Divider().padding(.leading) }
+                            if showFinished {
+                                dateRow(label: "Finished", date: book.finishedAt) {
+                                    editingDateField = .finished
+                                    pickerDate = book.finishedAt ?? Date()
+                                    showingDatePicker = true
+                                }
+                            }
+                        }
+                        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
+                    }
+
+                    if book.status == .read {
+                        VStack(alignment: .leading, spacing: 10) {
+                            Text("Your Rating")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                            HStack(spacing: 12) {
+                                StarRatingView(rating: optimisticRating ?? book.rating ?? 0) { newRating in
+                                    Task { await updateRating(to: newRating) }
+                                }
+                                if let rating = optimisticRating ?? book.rating {
+                                    Text(rating.formatted(.number.precision(.fractionLength(0...2))))
+                                        .font(.subheadline)
+                                        .foregroundStyle(.secondary)
+                                        .monospacedDigit()
+                                }
+                            }
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding()
+                        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
+                    }
+                }
+                .padding(.horizontal)
 
                 // Status Menu
                 Menu {
@@ -133,16 +178,74 @@ struct ReadingView: View {
             }
             .presentationDetents([.height(200)])
         }
+        .sheet(isPresented: $showingDatePicker) {
+            NavigationStack {
+                DatePicker(
+                    editingDateField == .started ? "Start Date" : "Finish Date",
+                    selection: $pickerDate,
+                    displayedComponents: .date
+                )
+                .datePickerStyle(.graphical)
+                .navigationTitle(editingDateField == .started ? "Start Date" : "Finish Date")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Cancel") { showingDatePicker = false }
+                    }
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Save") {
+                            let field = editingDateField
+                            let date = pickerDate
+                            showingDatePicker = false
+                            Task { await updateDate(date, field: field) }
+                        }
+                    }
+                }
+            }
+            .presentationDetents([.medium])
+        }
+    }
+
+    // MARK: - Subviews
+
+    private func dateRow(label: String, date: Date?, onEdit: @escaping () -> Void) -> some View {
+        HStack {
+            Text(label)
+                .font(.subheadline)
+            Spacer()
+            if let date {
+                Text(date, style: .date)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            } else {
+                Button(action: onEdit) {
+                    Image(systemName: "pencil")
+                        .foregroundStyle(.secondary)
+                }
+            }
+        }
+        .padding(.horizontal)
+        .padding(.vertical, 12)
     }
 
     // MARK: - Actions
 
     private func updateProgress(to page: Int) async {
         do {
-            try await libraryService.updateProgress(bookId: book.bookId, currentPage: page)
-            await refetchBook()
+            book = try await libraryService.updateProgress(bookId: book.bookId, currentPage: page)
         } catch {
             print("Failed to update progress: \(error)")
+        }
+    }
+
+    private func updateRating(to rating: Double) async {
+        optimisticRating = rating
+        do {
+            book = try await libraryService.updateRating(bookId: book.bookId, rating: rating)
+            optimisticRating = nil
+        } catch {
+            optimisticRating = nil
+            print("Failed to update rating: \(error)")
         }
     }
 
@@ -164,10 +267,33 @@ struct ReadingView: View {
         defer { isSaving = false }
 
         do {
+            let previousStatus = book.status
             try await libraryService.updateStatus(bookId: book.bookId, status: status)
-            await refetchBook()
+            if status == .currentlyReading && book.startedAt == nil {
+                book = try await libraryService.updateStartDate(bookId: book.bookId, date: Date())
+            } else if status == .read && previousStatus == .currentlyReading {
+                if let pageCount = book.pageCount {
+                    book = try await libraryService.updateProgress(bookId: book.bookId, currentPage: pageCount)
+                }
+                book = try await libraryService.updateFinishDate(bookId: book.bookId, date: Date())
+            } else {
+                await refetchBook()
+            }
         } catch {
             print("Failed to update status: \(error)")
+        }
+    }
+
+    private func updateDate(_ date: Date, field: DateField) async {
+        do {
+            switch field {
+            case .started:
+                book = try await libraryService.updateStartDate(bookId: book.bookId, date: date)
+            case .finished:
+                book = try await libraryService.updateFinishDate(bookId: book.bookId, date: date)
+            }
+        } catch {
+            print("Failed to update date: \(error)")
         }
     }
 

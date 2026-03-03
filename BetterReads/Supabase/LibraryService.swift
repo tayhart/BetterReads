@@ -13,7 +13,10 @@ protocol LibraryServiceProtocol {
     func fetchBookStatus(bookId: String) async throws -> ReadingStatus?
     func saveBook(_ bookDetails: BookDetails, status: ReadingStatus) async throws
     func updateStatus(bookId: String, status: ReadingStatus) async throws
-    func updateProgress(bookId: String, currentPage: Int) async throws
+    func updateProgress(bookId: String, currentPage: Int) async throws -> UserBook
+    func updateRating(bookId: String, rating: Double) async throws -> UserBook
+    func updateStartDate(bookId: String, date: Date) async throws -> UserBook
+    func updateFinishDate(bookId: String, date: Date) async throws -> UserBook
     func removeBook(bookId: String) async throws
 }
 
@@ -108,19 +111,96 @@ final class LibraryService: LibraryServiceProtocol {
             .execute()
     }
 
-    func updateProgress(bookId: String, currentPage: Int) async throws {
+    func updateProgress(bookId: String, currentPage: Int) async throws -> UserBook {
         guard let userId = currentUserId else {
             throw LibraryError.notAuthenticated
         }
 
         let update = UpdateUserBookProgress(currentPage: currentPage)
 
-        try await database
+        let response: [UserBook] = try await database
             .from("user_books")
             .update(update)
             .eq("user_id", value: userId.uuidString)
             .eq("book_id", value: bookId)
+            .select()
             .execute()
+            .value
+
+        guard let updated = response.first else {
+            throw LibraryError.bookNotFound
+        }
+
+        return updated
+    }
+
+    func updateRating(bookId: String, rating: Double) async throws -> UserBook {
+        guard let userId = currentUserId else {
+            throw LibraryError.notAuthenticated
+        }
+
+        let update = UpdateUserBookRating(rating: rating)
+
+        let response: [UserBook] = try await database
+            .from("user_books")
+            .update(update)
+            .eq("user_id", value: userId.uuidString)
+            .eq("book_id", value: bookId)
+            .select()
+            .execute()
+            .value
+
+        guard let updated = response.first else {
+            throw LibraryError.bookNotFound
+        }
+
+        return updated
+    }
+
+    func updateStartDate(bookId: String, date: Date) async throws -> UserBook {
+        guard let userId = currentUserId else {
+            throw LibraryError.notAuthenticated
+        }
+
+        let update = UpdateUserBookStartDate(date: date)
+
+        let response: [UserBook] = try await database
+            .from("user_books")
+            .update(update)
+            .eq("user_id", value: userId.uuidString)
+            .eq("book_id", value: bookId)
+            .select()
+            .execute()
+            .value
+
+        guard let updated = response.first else {
+            throw LibraryError.bookNotFound
+        }
+
+        return updated
+    }
+
+    func updateFinishDate(bookId: String, date: Date) async throws -> UserBook {
+        guard let userId = currentUserId else {
+            throw LibraryError.notAuthenticated
+        }
+
+        let update = UpdateUserBookFinishDate(date: date)
+
+        let response: [UserBook] = try await database
+            .from("user_books")
+            .update(update)
+            .eq("user_id", value: userId.uuidString)
+            .eq("book_id", value: bookId)
+            .select()
+            .execute()
+            .value
+
+        guard let updated = response.first else {
+            throw LibraryError.bookNotFound
+        }
+
+        return updated
     }
 
     func removeBook(bookId: String) async throws {

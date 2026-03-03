@@ -66,6 +66,10 @@ struct HomeView: View {
                 if let toReadBooks = groupedBooks[.toRead], !toReadBooks.isEmpty {
                     toReadSection(toReadBooks)
                 }
+
+                if let readBooks = groupedBooks[.read], !readBooks.isEmpty {
+                    recentlyReadSection(readBooks)
+                }
             }
             .padding(.vertical)
         }
@@ -124,6 +128,35 @@ struct HomeView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: 16) {
                     ForEach(books) { book in
+                        BookCard(book: book)
+                    }
+                }
+                .padding(.horizontal)
+            }
+        }
+    }
+
+    private func recentlyReadSection(_ books: [UserBook]) -> some View {
+        let sorted = books.sorted { ($0.finishedAt ?? .distantPast) > ($1.finishedAt ?? .distantPast) }
+        return VStack(alignment: .leading, spacing: 12) {
+            Button {
+                router.navigate(to: .recentlyRead(sorted))
+            } label: {
+                HStack {
+                    Text(ReadingStatus.read.displayTitle)
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                    Image(systemName: "chevron.right")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                }
+                .foregroundColor(.black)
+            }
+            .padding(.horizontal)
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                LazyHStack(spacing: 16) {
+                    ForEach(sorted) { book in
                         BookCard(book: book)
                     }
                 }
