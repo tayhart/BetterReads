@@ -11,7 +11,7 @@ import Foundation
 final class SupabaseSearchProvider: BookSearchProvider {
 
     func search(query: String) async throws -> [BookSearchResult] {
-        let response: [CachedBook] = try await SupabaseManager.shared.client.functions
+        let response: [BookWork] = try await SupabaseManager.shared.client.functions
             .invoke(
                 "search-books",
                 options: .init(query: [URLQueryItem(name: "q", value: query)])
@@ -21,36 +21,40 @@ final class SupabaseSearchProvider: BookSearchProvider {
             throw BookSearchError.noResults
         }
 
-        return response.compactMap { cached -> BookSearchResult? in
-            let provider: BookDetails.BookProvider =
-                cached.provider == "Open Library" ? .openLibrary : .googleBooks
+        return response.compactMap { work -> BookSearchResult? in
+            let primaryEdition = work.editions.first
+            let workId = work.workKey ?? primaryEdition?.id ?? UUID().uuidString
 
-            let imageLinks: BookImageLinks? = cached.coverUrl.map {
+            let provider: BookDetails.BookProvider =
+                primaryEdition?.provider == "openLibrary" ? .openLibrary : .googleBooks
+
+            let coverUrl = work.coverUrl ?? primaryEdition?.coverUrl
+            let imageLinks: BookImageLinks? = coverUrl.map {
                 BookImageLinks(thumbnail: $0, small: nil, medium: nil, large: nil)
             }
 
             let details = BookDetails(
-                id: cached.id,
-                title: cached.title,
-                authors: cached.authors,
-                publisher: cached.publisher,
-                publishedDate: cached.publishedDate,
-                description: cached.description,
-                pageCount: cached.pageCount,
-                averageRating: cached.averageRating,
-                ratingsCount: cached.ratingsCount,
-                categories: cached.categories,
+                id: workId,
+                title: work.title,
+                authors: work.authors,
+                publisher: primaryEdition?.publisher,
+                publishedDate: primaryEdition?.publishedDate,
+                description: work.description,
+                pageCount: primaryEdition?.pageCount,
+                averageRating: work.averageRating,
+                ratingsCount: work.ratingsCount,
+                categories: work.categories,
                 imageLinks: imageLinks,
-                isbn10: cached.isbn10,
-                isbn13: cached.isbn13,
+                isbn10: primaryEdition?.isbn10,
+                isbn13: primaryEdition?.isbn13,
                 provider: provider
             )
 
             let book = Book(
-                id: cached.id,
-                title: cached.title,
-                author: cached.authors?.first ?? "Unknown Author",
-                cover: cached.coverUrl
+                id: workId,
+                title: work.title,
+                author: work.authors?.first ?? "Unknown Author",
+                cover: coverUrl
             )
 
             return BookSearchResult(book: book, details: details)
