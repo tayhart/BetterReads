@@ -9,20 +9,22 @@ import SwiftUI
 
 struct ProgressUpdateSheet: View {
     let book: UserBook
-    let onSave: ((Int) async -> Void)?
+    let onSave: ((Int, Int?) async -> Void)?
 
     @Environment(\.dismiss) private var dismiss
     @State private var currentPage: Int
+    @State private var pageCount: Int?
     @State private var isSaving = false
 
-    init(book: UserBook, onSave: ((Int) async -> Void)?) {
+    init(book: UserBook, onSave: ((Int, Int?) async -> Void)?) {
         self.book = book
         self.onSave = onSave
         self._currentPage = State(initialValue: book.currentPage ?? 0)
+        self._pageCount = State(initialValue: book.pageCount)
     }
 
     private var maxPages: Int {
-        book.pageCount ?? 1000
+        pageCount ?? book.pageCount ?? 1000
     }
 
     var body: some View {
@@ -37,8 +39,12 @@ struct ProgressUpdateSheet: View {
                         .textFieldStyle(.roundedBorder)
                         .keyboardType(.numberPad)
                         .frame(width: 80)
-                    Text("of \(maxPages)")
+                    Text("of")
                         .foregroundStyle(.secondary)
+                    TextField("Total", value: $pageCount, format: .number)
+                        .textFieldStyle(.roundedBorder)
+                        .keyboardType(.numberPad)
+                        .frame(width: 80)
                 }
 
                 Slider(
@@ -62,7 +68,8 @@ struct ProgressUpdateSheet: View {
                     Button("Save") {
                         Task {
                             isSaving = true
-                            await onSave?(currentPage)
+                            let updatedPageCount = pageCount != book.pageCount ? pageCount : nil
+                            await onSave?(currentPage, updatedPageCount)
                             isSaving = false
                             dismiss()
                         }

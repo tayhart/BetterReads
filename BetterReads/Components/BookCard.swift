@@ -9,12 +9,12 @@ import SwiftUI
 
 struct BookCard: View {
     let book: UserBook
-    let onProgressUpdate: ((Int) async -> Void)?
+    let onProgressUpdate: ((Int, Int?) async -> Void)?
 
     @Environment(Router.self) private var router
     @State private var showingProgressSheet = false
 
-    init(book: UserBook, onProgressUpdate: ((Int) async -> Void)? = nil) {
+    init(book: UserBook, onProgressUpdate: ((Int, Int?) async -> Void)? = nil) {
         self.book = book
         self.onProgressUpdate = onProgressUpdate
     }

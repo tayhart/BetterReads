@@ -173,7 +173,10 @@ struct ReadingView: View {
         }
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showingProgressSheet) {
-            ProgressUpdateSheet(book: book) { newPage in
+            ProgressUpdateSheet(book: book) { newPage, newPageCount in
+                if let newPageCount {
+                    book = (try? await libraryService.updatePageCount(bookId: book.bookId, pageCount: newPageCount)) ?? book
+                }
                 await updateProgress(to: newPage)
             }
             .presentationDetents([.height(200)])
@@ -214,9 +217,11 @@ struct ReadingView: View {
                 .font(.subheadline)
             Spacer()
             if let date {
-                Text(date, style: .date)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                Button(action: onEdit) {
+                    Text(date, style: .date)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
             } else {
                 Button(action: onEdit) {
                     Image(systemName: "pencil")

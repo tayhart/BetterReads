@@ -49,7 +49,7 @@ struct StarRatingView: View {
         let clamped = max(0, min(x, totalWidth))
         let raw = Double(clamped) / Double(totalWidth) * Double(starCount)
         let snapped = (raw * 4).rounded() / 4
-        return min(max(snapped, 0.25), Double(starCount))
+        return min(max(snapped, 1.0), Double(starCount))
     }
 
     private func fillFraction(for index: Int) -> Double {

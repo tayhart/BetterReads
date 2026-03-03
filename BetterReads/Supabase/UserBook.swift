@@ -175,6 +175,22 @@ struct UpdateUserBookFinishDate: Codable {
     }
 }
 
+/// Data transfer object for updating a user book's page count
+struct UpdateUserBookPageCount: Codable {
+    let pageCount: Int
+    let updatedAt: Date
+
+    enum CodingKeys: String, CodingKey {
+        case pageCount = "page_count"
+        case updatedAt = "updated_at"
+    }
+
+    init(pageCount: Int) {
+        self.pageCount = pageCount
+        self.updatedAt = Date()
+    }
+}
+
 /// Data transfer object for updating reading progress
 struct UpdateUserBookProgress: Codable {
     let currentPage: Int

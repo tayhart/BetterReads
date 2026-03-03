@@ -14,6 +14,7 @@ protocol LibraryServiceProtocol {
     func saveBook(_ bookDetails: BookDetails, status: ReadingStatus) async throws
     func updateStatus(bookId: String, status: ReadingStatus) async throws
     func updateProgress(bookId: String, currentPage: Int) async throws -> UserBook
+    func updatePageCount(bookId: String, pageCount: Int) async throws -> UserBook
     func updateRating(bookId: String, rating: Double) async throws -> UserBook
     func updateStartDate(bookId: String, date: Date) async throws -> UserBook
     func updateFinishDate(bookId: String, date: Date) async throws -> UserBook
@@ -117,6 +118,29 @@ final class LibraryService: LibraryServiceProtocol {
         }
 
         let update = UpdateUserBookProgress(currentPage: currentPage)
+
+        let response: [UserBook] = try await database
+            .from("user_books")
+            .update(update)
+            .eq("user_id", value: userId.uuidString)
+            .eq("book_id", value: bookId)
+            .select()
+            .execute()
+            .value
+
+        guard let updated = response.first else {
+            throw LibraryError.bookNotFound
+        }
+
+        return updated
+    }
+
+    func updatePageCount(bookId: String, pageCount: Int) async throws -> UserBook {
+        guard let userId = currentUserId else {
+            throw LibraryError.notAuthenticated
+        }
+
+        let update = UpdateUserBookPageCount(pageCount: pageCount)
 
         let response: [UserBook] = try await database
             .from("user_books")

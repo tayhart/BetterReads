@@ -98,8 +98,8 @@ struct HomeView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: 16) {
                     ForEach(books) { book in
-                        BookCard(book: book) { newPage in
-                            await updateProgress(for: book, to: newPage)
+                        BookCard(book: book) { newPage, newPageCount in
+                            await updateProgress(for: book, to: newPage, pageCount: newPageCount)
                         }
                     }
                 }
@@ -205,8 +205,11 @@ struct HomeView: View {
         }
     }
 
-    private func updateProgress(for book: UserBook, to page: Int) async {
+    private func updateProgress(for book: UserBook, to page: Int, pageCount: Int? = nil) async {
         do {
+            if let pageCount {
+                try await libraryService.updatePageCount(bookId: book.bookId, pageCount: pageCount)
+            }
             try await libraryService.updateProgress(bookId: book.bookId, currentPage: page)
             await fetchBooks()
         } catch {
