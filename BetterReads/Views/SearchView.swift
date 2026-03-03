@@ -65,9 +65,7 @@ struct SearchView: View {
     @ViewBuilder
     private var resultsContent: some View {
         if viewModel.isLoading {
-            Spacer()
-            ProgressView()
-            Spacer()
+            skeletonList
         } else if let error = viewModel.error {
             Spacer()
             VStack(spacing: 8) {
@@ -88,6 +86,18 @@ struct SearchView: View {
         } else {
             resultsList
         }
+    }
+
+    private var skeletonList: some View {
+        ScrollView {
+            LazyVStack(spacing: 15) {
+                ForEach(0..<6, id: \.self) { _ in
+                    SearchResultSkeletonRow()
+                }
+            }
+            .padding(15)
+        }
+        .allowsHitTesting(false)
     }
 
     private var resultsList: some View {
@@ -150,11 +160,11 @@ class SearchViewModel: ObservableObject {
 
     func search(query: String) {
         isLoading = true
-        defer { isLoading = false }
         searchResults = []
         error = nil
 
         Task {
+            defer { isLoading = false }
             do {
                 let results = try await provider.search(query: query)
                 self.searchResults = results
@@ -171,6 +181,60 @@ class SearchViewModel: ObservableObject {
             return nil
         }
         return searchResults[index].details
+    }
+}
+
+// MARK: - Skeleton Row
+
+struct SearchResultSkeletonRow: View {
+    @State private var shimmerOffset: CGFloat = -1
+
+    var body: some View {
+        HStack(alignment: .center, spacing: 15) {
+            shimmerRect(width: 100, height: 150)
+                .clipShape(RoundedRectangle(cornerRadius: 4))
+
+            VStack(alignment: .leading, spacing: 10) {
+                shimmerRect(width: 160, height: 16)
+                    .clipShape(RoundedRectangle(cornerRadius: 4))
+                shimmerRect(width: 110, height: 13)
+                    .clipShape(RoundedRectangle(cornerRadius: 4))
+            }
+
+            Spacer()
+        }
+        .padding(10)
+        .frame(maxWidth: .infinity)
+        .background(Color(UIColor.systemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .overlay(
+            RoundedRectangle(cornerRadius: 8)
+                .stroke(Color.primary.opacity(0.15), lineWidth: 2)
+        )
+        .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 5)
+        .onAppear {
+            withAnimation(.linear(duration: 1.2).repeatForever(autoreverses: false)) {
+                shimmerOffset = 1
+            }
+        }
+    }
+
+    private func shimmerRect(width: CGFloat, height: CGFloat) -> some View {
+        Rectangle()
+            .fill(shimmerGradient)
+            .frame(width: width, height: height)
+    }
+
+    private var shimmerGradient: LinearGradient {
+        LinearGradient(
+            stops: [
+                .init(color: Color(UIColor.systemGray5), location: 0),
+                .init(color: Color(UIColor.systemGray4), location: 0.4),
+                .init(color: Color(UIColor.systemGray5), location: 1),
+            ],
+            startPoint: UnitPoint(x: shimmerOffset - 0.4, y: 0.5),
+            endPoint: UnitPoint(x: shimmerOffset + 0.4, y: 0.5)
+        )
     }
 }
 
