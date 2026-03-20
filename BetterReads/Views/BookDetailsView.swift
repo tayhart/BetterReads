@@ -16,6 +16,7 @@ struct BookDetailsView: View {
     @State private var isSaving = false
     @State private var errorMessage: String?
     @State private var showingSignInPrompt = false
+    @State private var isDescriptionExpanded = false
 
     private let authService = AuthService.shared
     private let libraryService = LibraryService.shared
@@ -132,8 +133,24 @@ struct BookDetailsView: View {
                 .font(.headline)
                 .padding(.leading, 5)
 
-            Text(descriptionText)
-                .font(.body)
+            Button {
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    isDescriptionExpanded.toggle()
+                }
+            } label: {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(descriptionText)
+                        .font(.body)
+                        .lineLimit(isDescriptionExpanded ? nil : 5)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                    HStack {
+                        Spacer()
+                        Text(isDescriptionExpanded ? "Show less" : "Show more")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
                 .padding(12)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(Color(UIColor.systemBackground))
@@ -142,6 +159,8 @@ struct BookDetailsView: View {
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(Color.primary, lineWidth: 1)
                 )
+            }
+            .buttonStyle(.plain)
         }
     }
 
