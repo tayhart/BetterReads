@@ -62,13 +62,16 @@ struct BookDetailsView: View {
         }
         .sheet(isPresented: $showingProgressSheet) {
             if let book = savedBook {
-                ProgressUpdateSheet(book: book) { newPage, newPageCount in
+                ProgressUpdateSheet(book: book) { newPage, newPageCount, newMode in
                     if let newPageCount {
                         savedBook = (try? await libraryService.updatePageCount(bookId: book.bookId, pageCount: newPageCount)) ?? savedBook
                     }
+                    if let newMode {
+                        savedBook = (try? await libraryService.updateProgressMode(bookId: book.bookId, mode: newMode)) ?? savedBook
+                    }
                     await updateProgress(to: newPage)
                 }
-                .presentationDetents([.height(200)])
+                .presentationDetents([.height(260)])
             }
         }
         .sheet(isPresented: $showingDatePicker) {

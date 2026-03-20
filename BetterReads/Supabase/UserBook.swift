@@ -7,6 +7,12 @@
 
 import Foundation
 
+/// Tracking mode for reading progress — stored per book in Supabase
+enum ProgressTrackingMode: String, Codable {
+    case page
+    case percentage
+}
+
 /// Represents a book in a user's reading list, stored in Supabase
 struct UserBook: Codable, Identifiable, Hashable {
     let id: UUID
@@ -27,6 +33,7 @@ struct UserBook: Codable, Identifiable, Hashable {
     let notes: String?
     let startedAt: Date?
     let finishedAt: Date?
+    let progressMode: ProgressTrackingMode?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -45,6 +52,7 @@ struct UserBook: Codable, Identifiable, Hashable {
         case notes
         case startedAt = "started_at"
         case finishedAt = "finished_at"
+        case progressMode = "progress_mode"
     }
 
     var progressPercentage: Double {
@@ -203,6 +211,22 @@ struct UpdateUserBookProgress: Codable {
 
     init(currentPage: Int) {
         self.currentPage = currentPage
+        self.updatedAt = Date()
+    }
+}
+
+/// Data transfer object for updating the progress tracking mode
+struct UpdateUserBookProgressMode: Codable {
+    let progressMode: ProgressTrackingMode
+    let updatedAt: Date
+
+    enum CodingKeys: String, CodingKey {
+        case progressMode = "progress_mode"
+        case updatedAt = "updated_at"
+    }
+
+    init(progressMode: ProgressTrackingMode) {
+        self.progressMode = progressMode
         self.updatedAt = Date()
     }
 }
