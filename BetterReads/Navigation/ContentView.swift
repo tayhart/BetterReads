@@ -30,7 +30,7 @@ struct ContentView: View {
         case .bookDetails(let details):
             BookDetailsView(bookDetails: details)
         case .reading(let book):
-            ReadingView(book: book)
+            BookDetailsView(bookDetails: book.toBookDetails(), preloadedBook: book)
         case .currentlyReading(let books):
             BookListView(books: books, status: .currentlyReading)
         case .toRead(let books):

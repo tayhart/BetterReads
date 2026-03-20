@@ -10,6 +10,7 @@ import Supabase
 
 protocol LibraryServiceProtocol {
     func fetchAllBooks() async throws -> [UserBook]
+    func fetchBook(bookId: String) async throws -> UserBook?
     func fetchBookStatus(bookId: String) async throws -> ReadingStatus?
     func saveBook(_ bookDetails: BookDetails, status: ReadingStatus) async throws
     func updateStatus(bookId: String, status: ReadingStatus) async throws
@@ -48,6 +49,22 @@ final class LibraryService: LibraryServiceProtocol {
             .order("updated_at", ascending: false)
             .execute()
             .value
+    }
+
+    func fetchBook(bookId: String) async throws -> UserBook? {
+        guard let userId = currentUserId else {
+            return nil
+        }
+
+        let response: [UserBook] = try await database
+            .from("user_books")
+            .select()
+            .eq("user_id", value: userId.uuidString)
+            .eq("book_id", value: bookId)
+            .execute()
+            .value
+
+        return response.first
     }
 
     func fetchBookStatus(bookId: String) async throws -> ReadingStatus? {
